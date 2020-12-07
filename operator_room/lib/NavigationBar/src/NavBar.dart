@@ -28,7 +28,7 @@ class _NavBarState extends State<NavBar> {
 
   Widget build(BuildContext context) {
     return Container(
-      height: 450.0,
+      height: 400.0,
       child: Column(
         children: [
           NavBarItem(
@@ -46,8 +46,8 @@ class _NavBarState extends State<NavBar> {
             touched: () {
               setState(() {
                 select(1);
-                navigateToSubPage(context, 'Team 1');
-                // SubPage('Team 1');
+                //navigateToSubPage(context, 'Team 1');
+                SubPage('Team 1');
               });
             },
           ),
@@ -174,10 +174,9 @@ class SubPage extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(left: 300),
           ),
-          //NavigationBar(),
+          NavigationBar(),
           Container(
-            height: 30,
-            //padding: EdgeInsets.only(left: 300),
+            height: 40,
             child: Text(
               'Team name',
               textAlign: TextAlign.left,
@@ -209,19 +208,6 @@ class SubPage extends StatelessWidget {
           //TextFormField(
           //decoration: InputDecoration(labelText: 'Enter your username'),
           //),
-          RaisedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            child: Container(
-              height: 30,
-              child: Text(
-                'Go Back',
-                textScaleFactor: 1.5,
-                style: TextStyle(color: Colors.black),
-              ),
-            ),
-          ),
         ],
       ),
     );
