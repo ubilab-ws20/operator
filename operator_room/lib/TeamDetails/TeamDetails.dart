@@ -12,6 +12,8 @@ class _TeamDetailsState extends State<TeamDetails> {
   @override
   Widget build(BuildContext context) {
     return Container(
+      height: MediaQuery.of(context).size.height,
+      width: MediaQuery.of(context).size.width,
       child: Positioned(
           left: 30.0,
           child: Container(
@@ -26,9 +28,10 @@ class _TeamDetailsState extends State<TeamDetails> {
                   margin: EdgeInsets.only(left: 30.0, top: 25.0, bottom: 10.0),
                   child: Text(
                     "Operator Room",
-                    style: GoogleFonts.quicksand(
+                    style: GoogleFonts.roboto(
                       fontWeight: FontWeight.bold,
-                      fontSize: 40,
+                      fontSize: 25.0,
+                      //fontStyle: FontStyle.italic,
                     ),
                   ),
                 ),
@@ -51,21 +54,21 @@ class _TeamDetailsState extends State<TeamDetails> {
                       Teams(
                         color: Color(0xffF1F354),
                         teamName: 'Team 2',
-                        percentComplete: '35%',
+                        percentComplete: '48%',
                         progressIndicatorColor: Colors.black87,
                         icon: MaterialCommunityIcons.numeric_2,
                       ),
                       Teams(
                         color: Color(0xff40F034),
                         teamName: 'Team 3',
-                        percentComplete: '35%',
+                        percentComplete: '27%',
                         progressIndicatorColor: Colors.black87,
                         icon: MaterialCommunityIcons.numeric_3,
                       ),
                       Teams(
                         color: Color(0xffDD3D1B),
                         teamName: 'Team 4',
-                        percentComplete: '35%',
+                        percentComplete: '68%',
                         progressIndicatorColor: Colors.black87,
                         icon: MaterialCommunityIcons.numeric_4,
                       ),

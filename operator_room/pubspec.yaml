@@ -29,6 +29,7 @@ dependencies:
   cupertino_icons: ^1.0.1
   google_fonts: ^1.1.1
   flutter_vector_icons: ^0.2.1
+  validators: ^2.0.0
   flutter_map:
 
 dev_dependencies:
