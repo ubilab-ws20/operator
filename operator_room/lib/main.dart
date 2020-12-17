@@ -1,37 +1,7 @@
-// import 'package:flutter/material.dart';
-// import 'package:operator_room/TeamDetails/TeamDetails.dart';
-
-// void main() {
-//   runApp(MaterialApp(
-//     home: MyApp(),
-//     title: "Scavenger_Hunt",
-//   ));
-// }
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: Text("Scavenger_Hunt"),
-//         backgroundColor: Color(0xff333951),
-//       ),
-//       body: Container(
-//         height: MediaQuery.of(context).size.height,
-//         width: MediaQuery.of(context).size.width,
-//         //color: Colors.blue[50],
-//         child: Stack(
-//           children: [
-//             //NavigationBar(),
-//             TeamDetails(),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+import 'dart:html';
 
 import 'package:flutter/material.dart';
+import 'package:operator_room/Homepage/HomePage.dart';
 import 'package:operator_room/TeamDetails/TeamDetails.dart';
 
 void main() => runApp(MyApp());
@@ -74,6 +44,9 @@ class MyCustomFormState extends State<MyCustomForm> {
   // not a GlobalKey<MyCustomFormState>.
   bool isPassword = false;
   bool isHidden = true;
+
+  final localStorage = window.localStorage;
+
   final _formKey = GlobalKey<FormState>();
 
   @override
@@ -138,46 +111,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                     // Scaffold.of(context)
                     //   .showSnackBar(SnackBar(content: Text('Processing Data')));
                     if (isPassword == true) {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Scaffold(
-                                    appBar: AppBar(
-                                      title: Text("Scavenger_Hunt"),
-                                      backgroundColor: Color(0xff333951),
-                                      actions: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            print("onTap called.");
-                                            /*Navigator.pushReplacement(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        MyCustomForm()));
-                                                        */
-                                          },
-                                          child: Container(
-                                            alignment: Alignment.centerRight,
-                                            padding:
-                                                EdgeInsets.only(right: 15.0),
-                                            child: Text('Logout'),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    body: Container(
-                                      height:
-                                          MediaQuery.of(context).size.height,
-                                      width: MediaQuery.of(context).size.width,
-                                      //color: Colors.blue[50],
-                                      child: Stack(
-                                        children: [
-                                          //NavigationBar(),
-                                          TeamDetails(),
-                                        ],
-                                      ),
-                                    ),
-                                  )));
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => HomePage()));
                     }
                   }
                 },
