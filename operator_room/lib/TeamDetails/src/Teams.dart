@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:operator_room/TeamDetails/src/TeamPage.dart';
 
 class Teams extends StatefulWidget {
   final Color color;
@@ -24,9 +25,11 @@ class _TeamsState extends State<Teams> {
   bool hovered = false;
   bool touched = false;
   @override
-  Future navigateToSubPage(context, team_name) async {
+  Future navigateToSubPage(context, teamName, markerColor, teamIcon) async {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SubPage(team_name)));
+        context,
+        MaterialPageRoute(
+            builder: (context) => TeamPage(teamName, markerColor, teamIcon)));
   }
 
   Widget build(BuildContext context) {
@@ -44,7 +47,8 @@ class _TeamsState extends State<Teams> {
       child: GestureDetector(
         onTap: () {
           print("onTap called.");
-          navigateToSubPage(context, widget.teamName);
+          navigateToSubPage(
+              context, widget.teamName, widget.color, widget.icon);
         },
         child: AnimatedContainer(
           duration: Duration(milliseconds: 300),
@@ -235,63 +239,6 @@ class _TeamsState extends State<Teams> {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class SubPage extends StatelessWidget {
-  final String teamname;
-
-  SubPage(this.teamname);
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(teamname + " Details"),
-        backgroundColor: Color(0xff333951),
-      ),
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        //crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Padding(
-            padding: EdgeInsets.only(left: 300),
-          ),
-          Container(
-            height: 40,
-            child: Text(
-              'Team name',
-              textAlign: TextAlign.left,
-              textScaleFactor: 1.5,
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-          Container(
-            height: 30,
-            //padding: EdgeInsets.only(left: 300),
-            child: Text(
-              'Players',
-              textAlign: TextAlign.left,
-              textScaleFactor: 1.5,
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-          Container(
-            height: 30,
-            //padding: EdgeInsets.only(left: 300),
-            child: Text(
-              'Number of hints used',
-              textAlign: TextAlign.left,
-              textScaleFactor: 1.5,
-              style: TextStyle(color: Colors.black),
-            ),
-          ),
-
-          //TextFormField(
-          //decoration: InputDecoration(labelText: 'Enter your username'),
-          //),
-        ],
       ),
     );
   }

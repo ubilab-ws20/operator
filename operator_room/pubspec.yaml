@@ -30,7 +30,10 @@ dependencies:
   google_fonts: ^1.1.1
   flutter_vector_icons: ^0.2.1
   validators: ^2.0.0
-  flutter_map:
+  flutter_map: any
+  user_location:
+    git:
+      url: https://github.com/igaurab/user_location_plugin.git
 
 dev_dependencies:
   flutter_test:
@@ -45,6 +48,11 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family: Piazzolla
+      fonts:
+        - asset: fonts\Piazzolla-VariableFont_opsz,wght.ttf
+        - asset: fonts\Piazzolla-Italic-VariableFont_opsz,wght.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:
