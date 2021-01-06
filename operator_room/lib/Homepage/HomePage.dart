@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:operator_room/TeamDetails/TeamDetails.dart';
-import 'package:user_location/user_location.dart';
 import 'package:latlong/latlong.dart';
 
 class HomePage extends StatelessWidget {

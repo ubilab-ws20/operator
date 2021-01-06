@@ -2,6 +2,7 @@ import 'dart:html';
 
 import 'package:flutter/material.dart';
 import 'package:operator_room/Homepage/HomePage.dart';
+import 'package:operator_room/MQTT/MqttManager.dart';
 import 'package:operator_room/TeamDetails/TeamDetails.dart';
 
 void main() => runApp(MyApp());
@@ -52,7 +53,9 @@ class MyCustomFormState extends State<MyCustomForm> {
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-
+    final MQTTManager manager =
+        MQTTManager(host: 'ws://earth.informatik.uni-freiburg.de');
+    manager.initialiseMQTTClient();
     return Form(
       key: _formKey,
       child: Center(
@@ -115,6 +118,8 @@ class MyCustomFormState extends State<MyCustomForm> {
                           MaterialPageRoute(builder: (context) => HomePage()));
                     }
                   }
+
+                  manager.connect();
                 },
                 color: Colors.cyan[800],
               ),
