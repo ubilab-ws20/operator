@@ -3,13 +3,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:operator_room/TeamDetails/TeamDetails.dart';
 import 'package:latlong/latlong.dart';
+import 'package:operator_room/main.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Scavenger_Hunt"),
+        title: Text(
+          'Scavenger_Hunt',
+          style: TextStyle(fontSize: 40, fontFamily: 'Piazzolla'),
+        ),
+        actions: <Widget>[
+          FlatButton(
+            textColor: Colors.white,
+            onPressed: () {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (BuildContext context) => MyApp(),
+                ),
+                (route) => false,
+              );
+            },
+            child: Text("LOG OUT"),
+            shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
+          ),
+        ],
         backgroundColor: Color(0xff333951),
       ),
       body: ListView(
