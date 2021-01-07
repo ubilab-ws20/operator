@@ -9,17 +9,22 @@ class MQTTManager {
   MQTTManager({@required String host}) : _host = host;
 
   void initialiseMQTTClient() {
-    client = MqttBrowserClient(_host, 'android');
-    client.port = 443;
-    client.keepAlivePeriod = 10;
+    client = MqttBrowserClient.withPort(
+        'earth.informatik.uni-freiburg.de/ubilab/', 'flutter_client', 2121,
+        maxConnectionAttempts: 1);
+    client.port = 2121;
+    client.keepAlivePeriod = 5;
+    client.onConnected = onConnected;
+
+    final connMessage = MqttConnectMessage().authenticateAs('ubilab', 'ubilab');
   }
 
   void connect() async {
     assert(client != null);
     try {
-      print('EXAMPLE::Mosquitto start client connecting....');
+      print('EXAMPLE::start client connecting....');
       //_currentState.setAppConnectionState(MQTTAppConnectionState.connecting);
-      await client.connect();
+      await client.connect('ubilab', 'ubilab');
       print("connected");
     } on Exception catch (e) {
       print('EXAMPLE::client exception - $e');
@@ -30,5 +35,9 @@ class MQTTManager {
   void disconnect() {
     print('Disconnected');
     client.disconnect();
+  }
+
+  void onConnected() {
+    print('EXAMPLE::Mosquitto client connected....');
   }
 }

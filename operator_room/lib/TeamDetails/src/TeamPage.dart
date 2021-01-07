@@ -5,9 +5,6 @@ import 'package:latlong/latlong.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
-import 'package:mqtt_client/mqtt_client.dart';
-import 'package:mqtt_client/mqtt_server_client.dart';
-
 class TeamPage extends StatelessWidget {
   final String teamname;
   final Color markerColor;
