@@ -4,10 +4,16 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:operator_room/TeamDetails/TeamDetails.dart';
 import 'package:latlong/latlong.dart';
 import 'package:operator_room/main.dart';
+import 'package:validators/sanitizers.dart';
 
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final List<String> teamDetails = [];
+
+    for (int i = 1; i <= 14; i++) {
+      teamDetails.add('team ' + toString(i));
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -40,7 +46,7 @@ class HomePage extends StatelessWidget {
             //color: Colors.blue[50],
             child: Stack(
               children: [
-                TeamDetails(),
+                TeamDetails(teamNames: teamDetails),
                 AnimatedContainer(
                   margin: EdgeInsets.only(
                       top: 275, bottom: 20, left: 20, right: 20),
