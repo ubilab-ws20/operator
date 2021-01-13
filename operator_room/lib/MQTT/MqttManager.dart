@@ -9,23 +9,19 @@ class MQTTManager {
   MQTTManager({@required String host}) : _host = host;
 
   void initialiseMQTTClient() {
-    client = MqttBrowserClient.withPort(
-        'ws://earth.informatik.uni-freiburg.de/ubilab/ws/',
-        'flutter_client',
-        443,
+    client = MqttBrowserClient(
+        'wss://earth.informatik.uni-freiburg.de/ubilab/ws/', "TestID",
         maxConnectionAttempts: 1);
 
-    //client.websocketProtocols = "https";
+    //client.clientIdentifier = 'TestID';
 
-    //client.websocketProtocolString = "https";
-
-    //client.port = 2121;
+    client.port = 443;
     client.keepAlivePeriod = 5;
     client.onConnected = onConnected;
 
-    final connMessage = MqttConnectMessage().authenticateAs('ubilab', 'ubilab');
+    //final connMessage = MqttConnectMessage().authenticateAs('ubilab', 'ubilab');
 
-    client.connectionMessage = connMessage;
+    //client.connectionMessage = connMessage;
   }
 
   void connect() async {
