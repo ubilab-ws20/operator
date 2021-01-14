@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_map/flutter_map.dart';
+import 'package:operator_room/MQTT/MqttManager.dart';
 import 'package:operator_room/TeamDetails/TeamDetails.dart';
 import 'package:latlong/latlong.dart';
 import 'package:operator_room/main.dart';
 import 'package:validators/sanitizers.dart';
 
 class HomePage extends StatelessWidget {
+  MQTTManager manager;
+  HomePage(this.manager);
+
   @override
   Widget build(BuildContext context) {
     final List<String> teamDetails = [];
 
-    for (int i = 1; i <= 14; i++) {
+    for (int i = 1; i <= 3; i++) {
       teamDetails.add('team ' + toString(i));
     }
     return Scaffold(
@@ -31,6 +35,7 @@ class HomePage extends StatelessWidget {
                 ),
                 (route) => false,
               );
+              manager.disconnect();
             },
             child: Text("LOG OUT"),
             shape: CircleBorder(side: BorderSide(color: Colors.transparent)),

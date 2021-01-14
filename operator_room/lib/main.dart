@@ -114,8 +114,10 @@ class MyCustomFormState extends State<MyCustomForm> {
                     // Scaffold.of(context)
                     //   .showSnackBar(SnackBar(content: Text('Processing Data')));
                     if (isPassword == true) {
-                      Navigator.pushReplacement(context,
-                          MaterialPageRoute(builder: (context) => HomePage()));
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => HomePage(manager)));
                     }
                   }
 
