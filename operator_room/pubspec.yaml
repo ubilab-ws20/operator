@@ -50,6 +50,11 @@ flutter:
   # the material Icons class.
   uses-material-design: true
   fonts:
+    - family: Texturina
+      fonts:
+        - asset: fonts\Texturina-BoldItalic-opsz=72.ttf
+          weight: 900
+
     - family: Piazzolla
       fonts:
         - asset: fonts\Piazzolla-VariableFont_opsz,wght.ttf
