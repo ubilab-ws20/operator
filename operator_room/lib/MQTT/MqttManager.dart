@@ -6,6 +6,8 @@ class MQTTManager {
   MqttBrowserClient client;
   final String _host;
   final String topicName = "testID/testtopic";
+  String payload;
+  List<String> teamDetails;
 
   MQTTManager({@required String host}) : _host = host;
 
@@ -37,6 +39,16 @@ class MQTTManager {
       print('EXAMPLE::client exception - $e');
       disconnect();
     }
+
+    client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      final MqttPublishMessage message = c[0].payload;
+      payload =
+          MqttPublishPayload.bytesToStringAsString(message.payload.message);
+      teamDetails = payload.split(",");
+      print(teamDetails);
+
+      print('Received message in operator:$payload from topic: ${c[0].topic}>');
+    });
   }
 
   void disconnect() {
@@ -52,6 +64,7 @@ class MQTTManager {
   void _subscribeToTopic(String topicName) {
     print('MQTTClientWrapper::Subscribing to the $topicName topic');
     client.subscribe(topicName, MqttQos.atMostOnce);
+    //  publish(topicName);
   }
 
 // subscribe to topic succeeded
@@ -67,5 +80,18 @@ class MQTTManager {
 // unsubscribe succeeded
   void onUnsubscribed(String topic) {
     print('Unsubscribed topic: $topic');
+  }
+
+  void publish(String topic) {
+    final builder = MqttClientPayloadBuilder();
+    //builder.addString('Hello there MQTT: ');
+    int val = 5;
+    builder.addInt(val);
+    client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload);
+  }
+
+  List<String> update() {
+    //teamDetails.add(payload);
+    return teamDetails;
   }
 }

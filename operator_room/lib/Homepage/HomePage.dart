@@ -13,11 +13,12 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<String> teamDetails = [];
+    List<String> teamDetails = [];
 
     for (int i = 1; i <= 3; i++) {
       teamDetails.add('team ' + toString(i));
     }
+    //teamDetails = manager.update();
     return Scaffold(
       appBar: AppBar(
         title: Text(

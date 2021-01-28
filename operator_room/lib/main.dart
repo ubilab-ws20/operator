@@ -109,6 +109,7 @@ class MyCustomFormState extends State<MyCustomForm> {
                 onPressed: () {
                   // Validate returns true if the form is valid, or false
                   // otherwise.
+                  manager.connect();
                   if (_formKey.currentState.validate()) {
                     //If the form is valid, display a Snackbar.
                     // Scaffold.of(context)
@@ -120,8 +121,6 @@ class MyCustomFormState extends State<MyCustomForm> {
                               builder: (context) => HomePage(manager)));
                     }
                   }
-
-                  manager.connect();
                 },
                 color: Colors.cyan[800],
               ),

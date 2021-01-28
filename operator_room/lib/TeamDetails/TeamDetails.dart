@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:operator_room/TeamDetails/src/Teams.dart';
 
 class TeamDetails extends StatefulWidget {
-  final List<String> teamNames;
+  List<String> teamNames;
 
   TeamDetails({
     this.teamNames,
