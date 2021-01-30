@@ -45,7 +45,7 @@ class MQTTManager {
       payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
       teamDetails = payload.split(",");
-      print(teamDetails);
+      print("Mqtt $teamDetails");
 
       print('Received message in operator:$payload from topic: ${c[0].topic}>');
     });
@@ -92,7 +92,9 @@ class MQTTManager {
 
   List<String> update() {
     //teamDetails.add(payload);
-    
+    if (teamDetails == null) {
+      return [];
+    }
     return teamDetails;
   }
 }

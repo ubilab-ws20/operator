@@ -4,26 +4,28 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:operator_room/MQTT/MqttManager.dart';
 import 'package:operator_room/TeamDetails/TeamDetails.dart';
 import 'package:latlong/latlong.dart';
-import 'package:operator_room/main.dart';
-import 'package:validators/sanitizers.dart';
+
+const String stringHostName =
+    "wss://earth.informatik.uni-freiburg.de/ubilab/ws/";
 
 class HomePage extends StatelessWidget {
-  final MQTTManager manager;
-  HomePage(this.manager);
+  final MQTTManager manager = MQTTManager(host: stringHostName);
 
   @override
   Widget build(BuildContext context) {
     List<String> teamDetails = [];
-    teamDetails = manager.update();
-
+    manager.initialiseMQTTClient();
+    manager.connect();
+    //teamDetails = manager.update();
+    print(teamDetails);
+    //sleep(Duration(seconds: 10));
     if (teamDetails == null) {
       print("data");
     }
 
-    /*for (int i = 1; i <= 3; i++) {
+    for (int i = 1; i <= 3; i++) {
       teamDetails.add('team ' + toString(i));
-    }*/
-    //
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -34,20 +36,19 @@ class HomePage extends StatelessWidget {
           FlatButton(
             textColor: Colors.white,
             onPressed: () {
-              Navigator.pushAndRemoveUntil(
+              manager.disconnect();
+              Navigator.pushNamedAndRemoveUntil(
                 context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => MyApp(),
-                ),
+                "/login",
                 (route) => false,
               );
-              manager.disconnect();
             },
             child: Text("LOG OUT"),
             shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
           ),
         ],
         backgroundColor: Color(0xff333951),
+        automaticallyImplyLeading: false,
       ),
       body: ListView(
         children: [

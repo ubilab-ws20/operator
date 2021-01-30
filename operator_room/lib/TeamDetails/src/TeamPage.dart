@@ -5,17 +5,20 @@ import 'package:latlong/latlong.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
-class TeamPage extends StatelessWidget {
+class Arguments {
   final String teamname;
   final Color markerColor;
-  final IconData teamIcon;
 
-  TeamPage(this.teamname, this.markerColor, this.teamIcon);
+  Arguments(this.teamname, this.markerColor);
+}
+
+class TeamPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final Arguments args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text(teamname + " Details"),
+        title: Text(args.teamname + " Details"),
         backgroundColor: Color(0xff333951),
       ),
       body: Container(
@@ -58,7 +61,7 @@ class TeamPage extends StatelessWidget {
                   ),
                   Container(
                     child: Text(
-                      teamname,
+                      args.teamname,
                       textAlign: TextAlign.left,
                       textScaleFactor: 1.5,
                       style: GoogleFonts.paprika(
@@ -118,10 +121,10 @@ class TeamPage extends StatelessWidget {
                       builder: (context) => Container(
                         child: IconButton(
                           icon: Icon(Icons.location_on),
-                          color: markerColor,
+                          color: args.markerColor,
                           iconSize: 45.0,
                           onPressed: () {
-                            print(teamname);
+                            print(args.teamname);
                           },
                         ),
                       ),

@@ -25,11 +25,13 @@ class _TeamsState extends State<Teams> {
   bool hovered = false;
   bool touched = false;
   @override
-  Future navigateToSubPage(context, teamName, markerColor, teamIcon) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => TeamPage(teamName, markerColor, teamIcon)));
+  Future navigateToSubPage(context, teamName, markerColor) async {
+    Navigator.pushNamed(context, "/teampage",
+        arguments: {teamName, markerColor});
+    // context,
+    // MaterialPageRoute(
+    //     builder: (context) => TeamPage(teamName, markerColor, teamIcon))
+    // "/teampage", );
   }
 
   Widget build(BuildContext context) {
@@ -47,8 +49,7 @@ class _TeamsState extends State<Teams> {
       child: GestureDetector(
         onTap: () {
           print("onTap called.");
-          navigateToSubPage(
-              context, widget.teamName, widget.color, widget.icon);
+          navigateToSubPage(context, widget.teamName, widget.color);
         },
         child: AnimatedContainer(
           duration: Duration(milliseconds: 300),
