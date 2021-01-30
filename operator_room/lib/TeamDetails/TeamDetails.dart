@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:operator_room/TeamDetails/src/Teams.dart';
 
 class TeamDetails extends StatefulWidget {
-  List<String> teamNames;
+  final List<String> teamNames;
 
   TeamDetails({
     this.teamNames,
@@ -48,8 +48,6 @@ class _TeamDetailsState extends State<TeamDetails> {
                   width: MediaQuery.of(context).size.width,
                   height: 200.0,
                   child: ListView.separated(
-                      //mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      //crossAxisAlignment: CrossAxisAlignment.center,
                       padding: EdgeInsets.only(
                           left: 25.0, right: 25.0, top: 10.0, bottom: 10.0),
                       scrollDirection: Axis.horizontal,

@@ -110,10 +110,9 @@ class MyCustomFormState extends State<MyCustomForm> {
                   // Validate returns true if the form is valid, or false
                   // otherwise.
                   manager.connect();
+                  //teamDetails = manager.update();
+
                   if (_formKey.currentState.validate()) {
-                    //If the form is valid, display a Snackbar.
-                    // Scaffold.of(context)
-                    //   .showSnackBar(SnackBar(content: Text('Processing Data')));
                     if (isPassword == true) {
                       Navigator.pushReplacement(
                           context,
@@ -136,4 +135,6 @@ class MyCustomFormState extends State<MyCustomForm> {
       isHidden = !isHidden;
     });
   }
+
+  // ignore: non_constant_identifier_names
 }

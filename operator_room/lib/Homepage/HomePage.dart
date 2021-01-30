@@ -8,17 +8,22 @@ import 'package:operator_room/main.dart';
 import 'package:validators/sanitizers.dart';
 
 class HomePage extends StatelessWidget {
-  MQTTManager manager;
+  final MQTTManager manager;
   HomePage(this.manager);
 
   @override
   Widget build(BuildContext context) {
     List<String> teamDetails = [];
+    teamDetails = manager.update();
 
-    for (int i = 1; i <= 3; i++) {
-      teamDetails.add('team ' + toString(i));
+    if (teamDetails == null) {
+      print("data");
     }
-    //teamDetails = manager.update();
+
+    /*for (int i = 1; i <= 3; i++) {
+      teamDetails.add('team ' + toString(i));
+    }*/
+    //
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -53,6 +58,8 @@ class HomePage extends StatelessWidget {
             child: Stack(
               children: [
                 TeamDetails(teamNames: teamDetails),
+                //  A null is passed here. Should have a if-else condition as to print
+                // No team registered yet if team Details is null
                 AnimatedContainer(
                   margin: EdgeInsets.only(
                       top: 275, bottom: 20, left: 20, right: 20),

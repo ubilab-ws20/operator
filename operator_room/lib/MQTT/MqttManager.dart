@@ -92,6 +92,7 @@ class MQTTManager {
 
   List<String> update() {
     //teamDetails.add(payload);
+    
     return teamDetails;
   }
 }
