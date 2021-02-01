@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: '/login',
       routes: {
-        '/login': (context) => Loginpage(),
+        '/login': (context) => LoginPage(),
         '/homepage': (context) => HomePage(),
         '/teampage': (context) => TeamPage(),
       },

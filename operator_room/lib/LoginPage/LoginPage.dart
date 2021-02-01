@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:operator_room/globals.dart';
 
-class Loginpage extends StatefulWidget {
+class LoginPage extends StatefulWidget {
   @override
-  LoginpageState createState() {
-    return LoginpageState();
+  LoginPageState createState() {
+    print("IsLoggedInMain:$isLoggedIn");
+    return LoginPageState();
   }
 }
 
-class LoginpageState extends State<Loginpage> {
+class LoginPageState extends State<LoginPage> {
   bool isPassword = false;
   bool isHidden = true;
 
@@ -58,7 +60,7 @@ class LoginpageState extends State<Loginpage> {
                       ),
                     ),
                     validator: (value) {
-                      if (value == 'abc123') {
+                      if (value == globalLoginPassword) {
                         isPassword = true;
                         return null;
                       } else {
@@ -81,8 +83,13 @@ class LoginpageState extends State<Loginpage> {
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
                       if (isPassword == true) {
+                        isLoggedIn = true;
+                        print("IsLoggedIn: $isLoggedIn");
                         Navigator.pushNamedAndRemoveUntil(
-                            context, "/homepage", (route) => false);
+                          context,
+                          "/homepage",
+                          (route) => false,
+                        );
                       }
                     }
                   },

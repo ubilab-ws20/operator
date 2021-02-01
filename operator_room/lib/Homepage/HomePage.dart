@@ -1,31 +1,27 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_map/flutter_map.dart';
-import 'package:operator_room/MQTT/MqttManager.dart';
+import 'package:operator_room/globals.dart';
 import 'package:operator_room/TeamDetails/TeamDetails.dart';
 import 'package:latlong/latlong.dart';
 
-const String stringHostName =
-    "wss://earth.informatik.uni-freiburg.de/ubilab/ws/";
-
 class HomePage extends StatelessWidget {
-  final MQTTManager manager = MQTTManager(host: stringHostName);
-
   @override
   Widget build(BuildContext context) {
-    List<String> teamDetails = [];
     manager.initialiseMQTTClient();
     manager.connect();
-    //teamDetails = manager.update();
+    print(manager.client.connectionStatus);
+    List<String> teamDetails = [];
+    teamDetails = manager.update();
     print(teamDetails);
     //sleep(Duration(seconds: 10));
     if (teamDetails == null) {
       print("data");
     }
 
-    for (int i = 1; i <= 3; i++) {
-      teamDetails.add('team ' + toString(i));
-    }
+    /*for (int i = 1; i <= 3; i++) {
+      teamDetails.add('team ' + i.toString());
+    }*/
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -37,6 +33,7 @@ class HomePage extends StatelessWidget {
             textColor: Colors.white,
             onPressed: () {
               manager.disconnect();
+              isLoggedIn = false;
               Navigator.pushNamedAndRemoveUntil(
                 context,
                 "/login",

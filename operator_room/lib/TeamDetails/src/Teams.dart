@@ -24,7 +24,7 @@ class Teams extends StatefulWidget {
 class _TeamsState extends State<Teams> {
   bool hovered = false;
   bool touched = false;
-  @override
+
   Future navigateToSubPage(context, teamName, markerColor) async {
     Navigator.pushNamed(context, "/teampage",
         arguments: {teamName, markerColor});
@@ -34,6 +34,7 @@ class _TeamsState extends State<Teams> {
     // "/teampage", );
   }
 
+  @override
   Widget build(BuildContext context) {
     return MouseRegion(
       onEnter: (value) {

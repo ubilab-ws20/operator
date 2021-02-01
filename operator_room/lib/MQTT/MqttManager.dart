@@ -12,9 +12,7 @@ class MQTTManager {
   MQTTManager({@required String host}) : _host = host;
 
   void initialiseMQTTClient() {
-    client = MqttBrowserClient(
-        'wss://earth.informatik.uni-freiburg.de/ubilab/ws/', "TestID",
-        maxConnectionAttempts: 1);
+    client = MqttBrowserClient(_host, "TestID", maxConnectionAttempts: 1);
 
     //client.clientIdentifier = 'TestID';
 
