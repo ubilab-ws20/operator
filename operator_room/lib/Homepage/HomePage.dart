@@ -1,27 +1,57 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import 'package:flutter_map/flutter_map.dart';
 import 'package:operator_room/globals.dart';
 import 'package:operator_room/TeamDetails/TeamDetails.dart';
 import 'package:latlong/latlong.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  List<String> teamDetails = [];
+  Timer _everySecond;
+  @override
+  void initState() {
+    super.initState();
+    // sets first value
+    teamDetails = [];
+    // defines a timer
+    _everySecond = Timer.periodic(Duration(seconds: 10), (Timer t) {
+      setState(() {
+        print("Timer Called");
+        if (mqttConnected == true) {
+          print("Updating...");
+          teamDetails = manager.update();
+        } else {
+          manager.initialiseMQTTClient();
+          manager.connect();
+        }
+      });
+    });
+  }
+
   Widget build(BuildContext context) {
-    manager.initialiseMQTTClient();
-    manager.connect();
-    print(manager.client.connectionStatus);
-    List<String> teamDetails = [];
-    teamDetails = manager.update();
+    if (mqttConnected == false || isLoggedIn == false) {
+      isLoggedIn = true;
+      print("Connected");
+      manager.initialiseMQTTClient();
+      manager.connect();
+    }
+    //print(manager.client.connectionStatus);
+    //jsonDecode(teamDetails);
     print(teamDetails);
     //sleep(Duration(seconds: 10));
-    if (teamDetails == null) {
+    if (teamDetails.isEmpty) {
+      print(mqttConnected);
       print("data");
     }
-
-    /*for (int i = 1; i <= 3; i++) {
-      teamDetails.add('team ' + i.toString());
-    }*/
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -153,5 +183,10 @@ class HomePage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }

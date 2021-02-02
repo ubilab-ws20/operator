@@ -84,6 +84,8 @@ class LoginPageState extends State<LoginPage> {
                     if (_formKey.currentState.validate()) {
                       if (isPassword == true) {
                         isLoggedIn = true;
+                        manager.initialiseMQTTClient();
+                        manager.connect();
                         print("IsLoggedIn: $isLoggedIn");
                         Navigator.pushNamedAndRemoveUntil(
                           context,

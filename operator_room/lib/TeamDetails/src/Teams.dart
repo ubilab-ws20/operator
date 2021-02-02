@@ -103,7 +103,7 @@ class _TeamsState extends State<Teams> {
                         style: GoogleFonts.quicksand(
                           fontWeight:
                               hovered ? FontWeight.bold : FontWeight.w500,
-                          fontSize: 20.0,
+                          fontSize: 15.0,
                           color: hovered ? Colors.black : Colors.black87,
                         ),
                       ),

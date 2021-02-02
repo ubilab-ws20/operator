@@ -6,3 +6,4 @@ const String globalLoginPassword = "abc123";
 
 MQTTManager manager = MQTTManager(host: stringHostName);
 bool isLoggedIn = false;
+bool mqttConnected = true;

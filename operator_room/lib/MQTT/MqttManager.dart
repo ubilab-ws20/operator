@@ -1,12 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_browser_client.dart';
+import 'package:operator_room/globals.dart';
 
 class MQTTManager {
   MqttBrowserClient client;
   final String _host;
   final String topicName = "testID/testtopic";
-  String payload;
+  //String payload;
   List<String> teamDetails;
 
   MQTTManager({@required String host}) : _host = host;
@@ -19,8 +20,10 @@ class MQTTManager {
     client.port = 443;
     client.keepAlivePeriod = 5;
     client.onConnected = onConnected;
+    client.onDisconnected = onDisconnected;
     client.onSubscribed = onSubscribed;
-
+    client.autoReconnect = true;
+    client.resubscribeOnAutoReconnect = true;
     //final connMessage = MqttConnectMessage().authenticateAs('ubilab', 'ubilab');
 
     //client.connectionMessage = connMessage;
@@ -39,29 +42,39 @@ class MQTTManager {
     }
 
     client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
+      print("listen message:${c[0].payload}");
       final MqttPublishMessage message = c[0].payload;
-      payload =
+      String payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
       teamDetails = payload.split(",");
       print("Mqtt $teamDetails");
-
+      message.setRetain(state: false);
+      message.payload.message.clear();
       print('Received message in operator:$payload from topic: ${c[0].topic}>');
     });
   }
 
   void disconnect() {
+    _unsubscribeToTopic(topicName);
     print('Disconnected');
     client.disconnect();
   }
 
   void onConnected() {
     print('EXAMPLE::Mosquitto client connected....');
+    mqttConnected = true;
     _subscribeToTopic(topicName);
   }
 
   void _subscribeToTopic(String topicName) {
     print('MQTTClientWrapper::Subscribing to the $topicName topic');
-    client.subscribe(topicName, MqttQos.atMostOnce);
+    client.subscribe(topicName, MqttQos.exactlyOnce);
+    //  publish(topicName);
+  }
+
+  void _unsubscribeToTopic(String topicName) {
+    print('MQTTClientWrapper::Unsubscribing to the $topicName topic');
+    client.unsubscribe(topicName);
     //  publish(topicName);
   }
 
@@ -94,5 +107,9 @@ class MQTTManager {
       return [];
     }
     return teamDetails;
+  }
+
+  void onDisconnected() {
+    mqttConnected = false;
   }
 }
