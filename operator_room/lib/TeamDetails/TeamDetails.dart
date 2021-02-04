@@ -53,11 +53,14 @@ class _TeamDetailsState extends State<TeamDetails> {
                 scrollDirection: Axis.horizontal,
                 itemCount: (widget.teamNames.length).ceil(),
                 itemBuilder: (BuildContext context, int index) {
+                  print(
+                      "Builder:$index- ${globalTeamName[index]},${globalProgressPercentage[index]}, ${globalTeamSize[index]}");
                   return Teams(
                     color: Color(0xff914BA9),
                     teamName: globalTeamName[index],
                     percentComplete:
                         (double.parse(globalProgressPercentage[index]) * 100)
+                            .floor()
                             .toString(),
                     teamSize: globalTeamSize[index],
                     hintsUsed: globalHintsUsed[index],

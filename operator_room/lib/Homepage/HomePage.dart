@@ -28,19 +28,31 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         print("Timer Called");
         if (mqttConnected == true) {
-          print("Updating...");
+          //print("Updating...");
           teamDetails = manager.update();
-          print("HomePage $teamDetails");
+          //print("HomePage $teamDetails");
           if (teamDetails != null && teamDetails.length > 0) {
             for (var v in teamDetails.keys) {
+              print("Key: $v");
               List<String> team = teamDetails[v];
-              print("TeamDetails is not Empty $team");
-              globalTeamName.add(team[0]);
-              globalTeamSize.add(team[1]);
-              globalHintsUsed.add(team[2]);
-              globalProgressPercentage.add(team[3]);
+              if (team.length > 0) {
+                print("TeamDetails is not Empty $team");
+                if (globalTeamName.contains(team[0])) {
+                  int index = globalTeamName.indexOf(team[0]);
+                  globalTeamSize[index] = team[1];
+                  globalHintsUsed[index] = team[2];
+                  globalProgressPercentage[index] = team[3];
+                } else {
+                  globalTeamName.add(team[0]);
+                  globalTeamSize.add(team[1]);
+                  globalHintsUsed.add(team[2]);
+                  globalProgressPercentage.add(team[3]);
+                }
+                team.clear();
+              }
               //globalCurrentPuzzleInfo.add(team[4]);
             }
+            print("TeamNames:$globalTeamName");
           }
         } else {
           manager.initialiseMQTTClient();
@@ -62,10 +74,6 @@ class _HomePageState extends State<HomePage> {
     //jsonDecode(teamDetails);
     print(teamDetails);
     //sleep(Duration(seconds: 10));
-    if (teamDetails.isEmpty) {
-      print(mqttConnected);
-      print("data");
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text(

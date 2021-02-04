@@ -18,7 +18,7 @@ class MQTTManager {
     //client.clientIdentifier = 'TestID';
 
     client.port = 443;
-    client.keepAlivePeriod = 5;
+    client.keepAlivePeriod = 15;
     client.onConnected = onConnected;
     client.onDisconnected = onDisconnected;
     client.onSubscribed = onSubscribed;
@@ -42,19 +42,23 @@ class MQTTManager {
     }
 
     client.updates.listen((List<MqttReceivedMessage<MqttMessage>> c) {
-      print("listen message:${c[0].payload}");
+      //print("listen message:${c[0].payload}");
       final MqttPublishMessage message = c[0].payload;
       String payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
       if (!payload.contains("Disconnecting")) {
-        print(payload);
-        List<String> team = payload.split(",").toSet().toList();
-        print(team);
+        List<String> team = payload.split(",");
         teamDetails[team[0]] = team;
-        //team.clear();
       } else {
         List<String> team = payload.split(" ");
         teamDetails.remove(team[0]);
+        if (globalTeamName.contains(team[0])) {
+          int index = globalTeamName.indexOf(team[0]);
+          globalTeamName.remove(team[0]);
+          globalTeamSize.remove(globalTeamSize[index]);
+          globalHintsUsed.remove(globalHintsUsed[index]);
+          globalProgressPercentage.remove(globalProgressPercentage[index]);
+        }
         team.clear();
       }
       print("MQTT TeamDetails:$teamDetails");
@@ -119,7 +123,7 @@ class MQTTManager {
     if (teamDetails == null) {
       return {};
     }
-    print("Unique Team:$teamDetails");
+    //print("Unique Team:$teamDetails");
     return teamDetails;
   }
 
