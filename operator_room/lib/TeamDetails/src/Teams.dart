@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:operator_room/TeamDetails/src/TeamPage.dart';
+//import 'package:operator_room/TeamDetails/src/TeamPage.dart';
+import 'package:operator_room/globals.dart';
 
 class Teams extends StatefulWidget {
   final Color color;
-  final Color progressIndicatorColor;
+  final String teamSize;
   final String teamName;
   final String percentComplete;
-  final IconData icon;
+  final String hintsUsed;
+  final String currentPuzzle;
 
   Teams({
     this.color,
-    this.progressIndicatorColor,
+    this.teamSize,
     this.teamName,
     this.percentComplete,
-    this.icon,
+    this.hintsUsed,
+    this.currentPuzzle,
   });
   @override
   _TeamsState createState() => _TeamsState();
@@ -25,17 +28,17 @@ class _TeamsState extends State<Teams> {
   bool hovered = false;
   bool touched = false;
 
-  Future navigateToSubPage(context, teamName, markerColor) async {
-    Navigator.pushNamed(context, "/teampage",
-        arguments: {teamName, markerColor});
-    // context,
-    // MaterialPageRoute(
-    //     builder: (context) => TeamPage(teamName, markerColor, teamIcon))
-    // "/teampage", );
+  Future navigateToSubPage(context) async {
+    Navigator.pushNamed(
+      context,
+      "/teampage",
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    print(
+        "Team Details: ${widget.teamName}, ${widget.hintsUsed}, ${widget.percentComplete}");
     return MouseRegion(
       onEnter: (value) {
         setState(() {
@@ -50,7 +53,12 @@ class _TeamsState extends State<Teams> {
       child: GestureDetector(
         onTap: () {
           print("onTap called.");
-          navigateToSubPage(context, widget.teamName, widget.color);
+          pageCurrentPuzzle =
+              widget.currentPuzzle != null ? widget.currentPuzzle : "";
+
+          pageTeamName = widget.teamName;
+          pageHintsUsed = widget.hintsUsed;
+          navigateToSubPage(context);
         },
         child: AnimatedContainer(
           duration: Duration(milliseconds: 300),
@@ -82,7 +90,7 @@ class _TeamsState extends State<Teams> {
                       height: 30.0,
                       width: 30.0,
                       child: Icon(
-                        widget.icon,
+                        MaterialCommunityIcons.account_group,
                         color: hovered ? Colors.black : Colors.white,
                         size: 25.0,
                       ),
@@ -141,7 +149,7 @@ class _TeamsState extends State<Teams> {
                       height: 15.0,
                       width: 100.0,
                       child: Text(
-                        "4 members",
+                        widget.teamSize,
                         style: GoogleFonts.quicksand(
                           fontWeight:
                               hovered ? FontWeight.bold : FontWeight.w500,
@@ -185,7 +193,7 @@ class _TeamsState extends State<Teams> {
                       height: 15.0,
                       width: 100.0,
                       child: Text(
-                        "Hints Used:",
+                        "Hints Used:" + widget.hintsUsed,
                         style: GoogleFonts.quicksand(
                           fontWeight:
                               hovered ? FontWeight.bold : FontWeight.w500,
@@ -202,7 +210,7 @@ class _TeamsState extends State<Teams> {
                     left: 135.0,
                   ),
                   child: Text(
-                    widget.percentComplete,
+                    widget.percentComplete + "%",
                     style: GoogleFonts.quicksand(
                       fontWeight: hovered ? FontWeight.bold : FontWeight.w500,
                       fontSize: 12.0,
@@ -216,9 +224,7 @@ class _TeamsState extends State<Teams> {
                   height: 6.0,
                   width: 160.0,
                   decoration: BoxDecoration(
-                    color: hovered
-                        ? widget.progressIndicatorColor
-                        : Color(0xffF5F6FA),
+                    color: hovered ? Colors.blue : Color(0xffF5F6FA),
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   child: Align(

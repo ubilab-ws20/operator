@@ -15,20 +15,33 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<String> teamDetails = [];
+  Map teamDetails = {};
   Timer _everySecond;
+  int percentage;
   @override
   void initState() {
     super.initState();
     // sets first value
-    teamDetails = [];
+    teamDetails = {};
     // defines a timer
-    _everySecond = Timer.periodic(Duration(seconds: 10), (Timer t) {
+    _everySecond = Timer.periodic(Duration(seconds: 5), (Timer t) {
       setState(() {
         print("Timer Called");
         if (mqttConnected == true) {
           print("Updating...");
           teamDetails = manager.update();
+          print("HomePage $teamDetails");
+          if (teamDetails != null && teamDetails.length > 0) {
+            for (var v in teamDetails.keys) {
+              List<String> team = teamDetails[v];
+              print("TeamDetails is not Empty $team");
+              globalTeamName.add(team[0]);
+              globalTeamSize.add(team[1]);
+              globalHintsUsed.add(team[2]);
+              globalProgressPercentage.add(team[3]);
+              //globalCurrentPuzzleInfo.add(team[4]);
+            }
+          }
         } else {
           manager.initialiseMQTTClient();
           manager.connect();
@@ -37,6 +50,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
     if (mqttConnected == false || isLoggedIn == false) {
       isLoggedIn = true;
@@ -86,8 +100,6 @@ class _HomePageState extends State<HomePage> {
             child: Stack(
               children: [
                 TeamDetails(teamNames: teamDetails),
-                //  A null is passed here. Should have a if-else condition as to print
-                // No team registered yet if team Details is null
                 AnimatedContainer(
                   margin: EdgeInsets.only(
                       top: 275, bottom: 20, left: 20, right: 20),
@@ -187,6 +199,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
+    _everySecond.cancel();
     super.dispose();
   }
 }

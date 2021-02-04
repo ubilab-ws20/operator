@@ -4,21 +4,19 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 
 import 'package:google_fonts/google_fonts.dart';
-
-class Arguments {
-  final String teamname;
-  final Color markerColor;
-
-  Arguments(this.teamname, this.markerColor);
-}
+import 'package:operator_room/globals.dart';
 
 class TeamPage extends StatelessWidget {
+  final Color markerColor = globalMarkerColor;
+  final String teamName = pageTeamName;
+  final String hintsUsed = pageHintsUsed;
+  final String currentPuzzle = pageCurrentPuzzle;
+
   @override
   Widget build(BuildContext context) {
-    final Arguments args = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text(args.teamname + " Details"),
+        title: Text(teamName + " Details"),
         backgroundColor: Color(0xff333951),
       ),
       body: Container(
@@ -48,7 +46,7 @@ class TeamPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          'Puzzle 2',
+                          pageCurrentPuzzle,
                           textAlign: TextAlign.left,
                           textScaleFactor: 1.5,
                           style: GoogleFonts.paprika(
@@ -61,7 +59,7 @@ class TeamPage extends StatelessWidget {
                   ),
                   Container(
                     child: Text(
-                      args.teamname,
+                      teamName,
                       textAlign: TextAlign.left,
                       textScaleFactor: 1.5,
                       style: GoogleFonts.paprika(
@@ -84,7 +82,7 @@ class TeamPage extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          '2',
+                          hintsUsed,
                           textAlign: TextAlign.left,
                           textScaleFactor: 1.5,
                           style: GoogleFonts.paprika(
@@ -121,10 +119,10 @@ class TeamPage extends StatelessWidget {
                       builder: (context) => Container(
                         child: IconButton(
                           icon: Icon(Icons.location_on),
-                          color: args.markerColor,
+                          color: markerColor,
                           iconSize: 45.0,
                           onPressed: () {
-                            print(args.teamname);
+                            print(teamName);
                           },
                         ),
                       ),

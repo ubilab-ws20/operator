@@ -8,7 +8,7 @@ class MQTTManager {
   final String _host;
   final String topicName = "testID/testtopic";
   //String payload;
-  List<String> teamDetails;
+  Map teamDetails = new Map();
 
   MQTTManager({@required String host}) : _host = host;
 
@@ -46,16 +46,27 @@ class MQTTManager {
       final MqttPublishMessage message = c[0].payload;
       String payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
-      teamDetails = payload.split(",");
-      print("Mqtt $teamDetails");
+      if (!payload.contains("Disconnecting")) {
+        print(payload);
+        List<String> team = payload.split(",").toSet().toList();
+        print(team);
+        teamDetails[team[0]] = team;
+        //team.clear();
+      } else {
+        List<String> team = payload.split(" ");
+        teamDetails.remove(team[0]);
+        team.clear();
+      }
+      print("MQTT TeamDetails:$teamDetails");
       message.setRetain(state: false);
-      message.payload.message.clear();
+      //message.payload.message.clear();
       print('Received message in operator:$payload from topic: ${c[0].topic}>');
     });
   }
 
   void disconnect() {
     _unsubscribeToTopic(topicName);
+    teamDetails.clear();
     print('Disconnected');
     client.disconnect();
   }
@@ -101,11 +112,14 @@ class MQTTManager {
     client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload);
   }
 
-  List<String> update() {
+  Map update() {
     //teamDetails.add(payload);
+    print("In Update");
+
     if (teamDetails == null) {
-      return [];
+      return {};
     }
+    print("Unique Team:$teamDetails");
     return teamDetails;
   }
 

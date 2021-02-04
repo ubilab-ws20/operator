@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:operator_room/TeamDetails/src/Teams.dart';
+import 'package:operator_room/globals.dart';
 
 class TeamDetails extends StatefulWidget {
-  final List<String> teamNames;
+  final Map teamNames;
 
   TeamDetails({
     this.teamNames,
@@ -17,6 +18,7 @@ class TeamDetails extends StatefulWidget {
 class _TeamDetailsState extends State<TeamDetails> {
   @override
   Widget build(BuildContext context) {
+    print("In TeamPage ${widget.teamNames}");
     return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
@@ -49,14 +51,17 @@ class _TeamDetailsState extends State<TeamDetails> {
                 padding: EdgeInsets.only(
                     left: 25.0, right: 25.0, top: 10.0, bottom: 10.0),
                 scrollDirection: Axis.horizontal,
-                itemCount: widget.teamNames.length,
+                itemCount: (widget.teamNames.length).ceil(),
                 itemBuilder: (BuildContext context, int index) {
                   return Teams(
                     color: Color(0xff914BA9),
-                    teamName: widget.teamNames[index],
-                    percentComplete: '35%',
-                    progressIndicatorColor: Colors.black87,
-                    icon: MaterialCommunityIcons.numeric_1,
+                    teamName: globalTeamName[index],
+                    percentComplete:
+                        (double.parse(globalProgressPercentage[index]) * 100)
+                            .toString(),
+                    teamSize: globalTeamSize[index],
+                    hintsUsed: globalHintsUsed[index],
+                    //currentPuzzle: globalCurrentPuzzleInfo[index],
                   );
                 },
                 separatorBuilder: (BuildContext context, int index) {
