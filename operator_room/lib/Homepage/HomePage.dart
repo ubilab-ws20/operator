@@ -24,33 +24,30 @@ class _HomePageState extends State<HomePage> {
     // sets first value
     teamDetails = {};
     // defines a timer
-    _everySecond = Timer.periodic(Duration(seconds: 5), (Timer t) {
+    _everySecond = Timer.periodic(Duration(seconds: 2), (Timer t) {
       setState(() {
         print("Timer Called");
         if (mqttConnected == true) {
           //print("Updating...");
           teamDetails = manager.update();
-          //print("HomePage $teamDetails");
+          print("HomePage $teamDetails");
           if (teamDetails != null && teamDetails.length > 0) {
             for (var v in teamDetails.keys) {
-              print("Key: $v");
-              List<String> team = teamDetails[v];
-              if (team.length > 0) {
-                print("TeamDetails is not Empty $team");
-                if (globalTeamName.contains(team[0])) {
-                  int index = globalTeamName.indexOf(team[0]);
-                  globalTeamSize[index] = team[1];
-                  globalHintsUsed[index] = team[2];
-                  globalProgressPercentage[index] = team[3];
-                } else {
-                  globalTeamName.add(team[0]);
-                  globalTeamSize.add(team[1]);
-                  globalHintsUsed.add(team[2]);
-                  globalProgressPercentage.add(team[3]);
-                }
-                team.clear();
+              var team = teamDetails[v];
+              print("TeamDetails is not Empty $team");
+              if (globalTeamName.contains(team['teamName'])) {
+                int index = globalTeamName.indexOf(team['teamName']);
+                globalTeamSize[index] = team["teamSize"];
+                globalHintsUsed[index] = team["hintsUsed"];
+                globalProgressPercentage[index] = team["gameProgress"];
+                globalCurrentPuzzleInfo[index] = team["currentPuzzle"];
+              } else {
+                globalTeamName.add(team['teamName']);
+                globalTeamSize.add(team["teamSize"]);
+                globalHintsUsed.add(team["hintsUsed"]);
+                globalProgressPercentage.add(team["gameProgress"]);
+                globalCurrentPuzzleInfo.add(team["currentPuzzle"]);
               }
-              //globalCurrentPuzzleInfo.add(team[4]);
             }
             print("TeamNames:$globalTeamName");
           }
@@ -66,14 +63,9 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     if (mqttConnected == false || isLoggedIn == false) {
       isLoggedIn = true;
-      print("Connected");
       manager.initialiseMQTTClient();
       manager.connect();
     }
-    //print(manager.client.connectionStatus);
-    //jsonDecode(teamDetails);
-    print(teamDetails);
-    //sleep(Duration(seconds: 10));
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -85,6 +77,7 @@ class _HomePageState extends State<HomePage> {
             textColor: Colors.white,
             onPressed: () {
               manager.disconnect();
+              teamDetails.clear();
               isLoggedIn = false;
               Navigator.pushNamedAndRemoveUntil(
                 context,

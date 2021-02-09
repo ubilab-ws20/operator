@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_browser_client.dart';
@@ -6,9 +8,9 @@ import 'package:operator_room/globals.dart';
 class MQTTManager {
   MqttBrowserClient client;
   final String _host;
-  final String topicName = "testID/testtopic";
-  //String payload;
+  final String topicName = "testID/scavenger_hunt";
   Map teamDetails = new Map();
+  bool _subscribed = false;
 
   MQTTManager({@required String host}) : _host = host;
 
@@ -32,10 +34,8 @@ class MQTTManager {
   void connect() async {
     assert(client != null);
     try {
-      print('EXAMPLE::start client connecting....');
-      //_currentState.setAppConnectionState(MQTTAppConnectionState.connecting);
+      //print('EXAMPLE::start client connecting....');
       await client.connect('ubilab', 'ubilab');
-      print("connected");
     } on Exception catch (e) {
       print('EXAMPLE::client exception - $e');
       disconnect();
@@ -46,10 +46,12 @@ class MQTTManager {
       final MqttPublishMessage message = c[0].payload;
       String payload =
           MqttPublishPayload.bytesToStringAsString(message.payload.message);
-      if (!payload.contains("Disconnecting")) {
-        List<String> team = payload.split(",");
-        teamDetails[team[0]] = team;
+      if (!payload.contains("disconnecting")) {
+        var jsonObj = jsonDecode(payload);
+        print("Jason: $jsonObj");
+        teamDetails[jsonObj["teamName"]] = jsonObj;
       } else {
+        print(payload);
         List<String> team = payload.split(" ");
         teamDetails.remove(team[0]);
         if (globalTeamName.contains(team[0])) {
@@ -64,15 +66,19 @@ class MQTTManager {
       print("MQTT TeamDetails:$teamDetails");
       message.setRetain(state: false);
       //message.payload.message.clear();
-      print('Received message in operator:$payload from topic: ${c[0].topic}>');
+      //print('Received message in operator:$payload from topic: ${c[0].topic}>');
     });
   }
 
   void disconnect() {
-    _unsubscribeToTopic(topicName);
-    teamDetails.clear();
-    print('Disconnected');
-    client.disconnect();
+    if (isSubscribed()) {
+      _unsubscribeToTopic(topicName);
+    }
+
+    if (mqttConnected) {
+      client.disconnect();
+    }
+    return;
   }
 
   void onConnected() {
@@ -84,18 +90,18 @@ class MQTTManager {
   void _subscribeToTopic(String topicName) {
     print('MQTTClientWrapper::Subscribing to the $topicName topic');
     client.subscribe(topicName, MqttQos.exactlyOnce);
-    //  publish(topicName);
   }
 
   void _unsubscribeToTopic(String topicName) {
     print('MQTTClientWrapper::Unsubscribing to the $topicName topic');
     client.unsubscribe(topicName);
-    //  publish(topicName);
+    _subscribed = false;
   }
 
 // subscribe to topic succeeded
   void onSubscribed(String topic) {
     print('Subscribed topic: $topic');
+    _subscribed = true;
   }
 
 // subscribe to topic failed
@@ -106,6 +112,11 @@ class MQTTManager {
 // unsubscribe succeeded
   void onUnsubscribed(String topic) {
     print('Unsubscribed topic: $topic');
+    _subscribed = false;
+  }
+
+  bool isSubscribed() {
+    return _subscribed;
   }
 
   void publish(String topic) {
@@ -129,5 +140,6 @@ class MQTTManager {
 
   void onDisconnected() {
     mqttConnected = false;
+    teamDetails.clear();
   }
 }
