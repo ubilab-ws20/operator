@@ -64,7 +64,8 @@ class _TeamDetailsState extends State<TeamDetails> {
                             .toString(),
                     teamSize: globalTeamSize[index],
                     hintsUsed: globalHintsUsed[index],
-                    //currentPuzzle: globalCurrentPuzzleInfo[index],
+                    currentPuzzle: globalCurrentPuzzleInfo[index],
+                    currentLocation: globalCurrentLocation[index],
                   );
                 },
                 separatorBuilder: (BuildContext context, int index) {

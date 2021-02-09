@@ -74,7 +74,6 @@ class MQTTManager {
     if (isSubscribed()) {
       _unsubscribeToTopic(topicName);
     }
-
     if (mqttConnected) {
       client.disconnect();
     }
@@ -119,22 +118,11 @@ class MQTTManager {
     return _subscribed;
   }
 
-  void publish(String topic) {
-    final builder = MqttClientPayloadBuilder();
-    //builder.addString('Hello there MQTT: ');
-    int val = 5;
-    builder.addInt(val);
-    client.publishMessage(topic, MqttQos.atLeastOnce, builder.payload);
-  }
-
   Map update() {
-    //teamDetails.add(payload);
     print("In Update");
-
     if (teamDetails == null) {
       return {};
     }
-    //print("Unique Team:$teamDetails");
     return teamDetails;
   }
 

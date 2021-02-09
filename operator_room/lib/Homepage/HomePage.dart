@@ -17,7 +17,29 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   Map teamDetails = {};
   Timer _everySecond;
-  int percentage;
+  double currentZoom = 18.0;
+  MapController mapController = MapController();
+  LatLng defaultLocation = LatLng(48.013217, 7.833264);
+
+  void _zoomOut() {
+    if (currentZoom > 0) {
+      currentZoom = currentZoom - 0.15;
+    } else {
+      currentZoom = 0;
+    }
+    mapController.move(defaultLocation, currentZoom);
+  }
+
+  void _zoomIn() {
+    //print(currentZoom);
+    if (currentZoom < 18.4) {
+      currentZoom = currentZoom + 0.15;
+    } else {
+      currentZoom = 18.4;
+    }
+    mapController.move(defaultLocation, currentZoom);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +56,8 @@ class _HomePageState extends State<HomePage> {
           if (teamDetails != null && teamDetails.length > 0) {
             for (var v in teamDetails.keys) {
               var team = teamDetails[v];
+              double latitude = team['latitude'];
+              double longitude = team['longitude'];
               print("TeamDetails is not Empty $team");
               if (globalTeamName.contains(team['teamName'])) {
                 int index = globalTeamName.indexOf(team['teamName']);
@@ -41,12 +65,14 @@ class _HomePageState extends State<HomePage> {
                 globalHintsUsed[index] = team["hintsUsed"];
                 globalProgressPercentage[index] = team["gameProgress"];
                 globalCurrentPuzzleInfo[index] = team["currentPuzzle"];
+                globalCurrentLocation[index] = LatLng(latitude, longitude);
               } else {
                 globalTeamName.add(team['teamName']);
                 globalTeamSize.add(team["teamSize"]);
                 globalHintsUsed.add(team["hintsUsed"]);
                 globalProgressPercentage.add(team["gameProgress"]);
                 globalCurrentPuzzleInfo.add(team["currentPuzzle"]);
+                globalCurrentLocation.add(LatLng(latitude, longitude));
               }
             }
             print("TeamNames:$globalTeamName");
@@ -77,7 +103,7 @@ class _HomePageState extends State<HomePage> {
             textColor: Colors.white,
             onPressed: () {
               manager.disconnect();
-              teamDetails.clear();
+              clearDetails();
               isLoggedIn = false;
               Navigator.pushNamedAndRemoveUntil(
                 context,
@@ -115,78 +141,37 @@ class _HomePageState extends State<HomePage> {
                       center: LatLng(48.012684, 7.835044),
                       zoom: 16.0,
                     ),
-                    //mapController: mapController,
+                    mapController: mapController,
                     layers: [
-                      MarkerLayerOptions(markers: [
-                        Marker(
-                          width: 80.0,
-                          //height: 80.0,
-                          point: LatLng(48.01264449144642, 7.835027628699855),
-                          builder: (context) => Container(
-                            child: IconButton(
-                              icon: Icon(Icons.location_on_sharp),
-                              color: Color(0xff914BA9),
-                              iconSize: 25.0,
-                              onPressed: () {
-                                print("Location 1 Pressed");
-                              },
-                            ),
-                          ),
-                        ),
-                        Marker(
-                          width: 80.0,
-                          //height: 80.0,
-                          point: LatLng(48.01226852265323, 7.834826910032458),
-                          builder: (context) => Container(
-                            child: IconButton(
-                              icon: Icon(Icons.location_on_sharp),
-                              color: Color(0xffF1F354),
-                              iconSize: 25.0,
-                              onPressed: () {
-                                print("Location 2 Pressed");
-                              },
-                            ),
-                          ),
-                        ),
-                        Marker(
-                          width: 80.0,
-                          //height: 80.0,
-                          point: LatLng(48.01257342478958, 7.835417156937603),
-                          builder: (context) => Container(
-                            child: IconButton(
-                              icon: Icon(Icons.location_on_sharp),
-                              color: Color(0xffDD3D1B),
-                              iconSize: 25.0,
-                              onPressed: () {
-                                print("Location 3 Pressed");
-                              },
-                            ),
-                          ),
-                        ),
-                        Marker(
-                          width: 80.0,
-                          //height: 80.0,
-                          point: LatLng(48.012638019932446, 7.834515934710326),
-                          builder: (context) => Container(
-                            child: IconButton(
-                              icon: Icon(Icons.location_on_sharp),
-                              color: Colors.teal[900],
-                              iconSize: 25.0,
-                              onPressed: () {
-                                print("Location 4 Pressed");
-                              },
-                            ),
-                          ),
-                        ),
-                      ]),
+                      MarkerLayerOptions(markers: getMarkers()),
                     ],
                     children: <Widget>[
                       TileLayerWidget(
-                          options: TileLayerOptions(
-                        urlTemplate:
-                            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                        subdomains: ['a', 'b', 'c'],
-                      )),
+                        options: TileLayerOptions(
+                          urlTemplate:
+                              "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                          subdomains: ['a', 'b', 'c'],
+                        ),
+                      ),
+                      FloatingActionButton.extended(
+                        heroTag: "ZoomOutbtn",
+                        backgroundColor: Colors.transparent,
+                        foregroundColor: Colors.grey[850],
+                        onPressed: _zoomOut,
+                        tooltip: 'ZoomOut',
+                        label: Icon(Icons.zoom_out_sharp),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 80),
+                        child: FloatingActionButton.extended(
+                          heroTag: "ZoomInbtn",
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: Colors.grey[850],
+                          onPressed: _zoomIn,
+                          tooltip: 'ZoomIn',
+                          label: Icon(Icons.zoom_in_sharp),
+                        ),
+                      ),
                     ],
                   ),
                 )
@@ -196,6 +181,42 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
     );
+  }
+
+  void clearDetails() {
+    teamDetails.clear();
+    globalCurrentPuzzleInfo.clear();
+    globalHintsUsed.clear();
+    globalProgressPercentage.clear();
+    globalTeamName.clear();
+    globalTeamSize.clear();
+    globalCurrentLocation.clear();
+  }
+
+  List<Marker> getMarkers() {
+    //print("In getmarks");
+    List<Marker> _markerList = [];
+    if (teamDetails.isNotEmpty) {
+      //print("In getmarks Non empty: $teamDetails");
+      for (var _users in globalCurrentLocation) {
+        _markerList.add(
+          Marker(
+            width: 40.0,
+            point: LatLng(_users.latitude, _users.longitude),
+            builder: (context) => Container(
+              child: IconButton(
+                icon: Icon(Icons.location_on_sharp),
+                color: Colors.teal[900],
+                iconSize: 25.0,
+                onPressed: () {},
+              ),
+            ),
+          ),
+        );
+      }
+      return _markerList;
+    }
+    return [];
   }
 
   @override

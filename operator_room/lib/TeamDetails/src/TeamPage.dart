@@ -7,10 +7,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:operator_room/globals.dart';
 
 class TeamPage extends StatelessWidget {
-  final Color markerColor = globalMarkerColor;
   final String teamName = pageTeamName;
   final String hintsUsed = pageHintsUsed;
   final String currentPuzzle = pageCurrentPuzzle;
+  final LatLng currentLocation = pageCurrentLocation;
 
   @override
   Widget build(BuildContext context) {
@@ -106,7 +106,7 @@ class TeamPage extends StatelessWidget {
               duration: Duration(milliseconds: 300),
               child: FlutterMap(
                 options: MapOptions(
-                  center: LatLng(48.012684, 7.835044),
+                  center: currentLocation,
                   zoom: 16.0,
                 ),
                 //mapController: mapController,
@@ -115,11 +115,10 @@ class TeamPage extends StatelessWidget {
                     Marker(
                       width: 80.0,
                       height: 80.0,
-                      point: LatLng(48.012677494702146, 7.834448879485198),
+                      point: currentLocation,
                       builder: (context) => Container(
                         child: IconButton(
                           icon: Icon(Icons.location_on),
-                          color: markerColor,
                           iconSize: 45.0,
                           onPressed: () {
                             print(teamName);

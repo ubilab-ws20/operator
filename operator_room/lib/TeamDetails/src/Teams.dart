@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
-//import 'package:operator_room/TeamDetails/src/TeamPage.dart';
+import 'package:latlong/latlong.dart';
 import 'package:operator_room/globals.dart';
 
 class Teams extends StatefulWidget {
@@ -11,15 +11,16 @@ class Teams extends StatefulWidget {
   final String percentComplete;
   final String hintsUsed;
   final String currentPuzzle;
+  final LatLng currentLocation;
 
-  Teams({
-    this.color,
-    this.teamSize,
-    this.teamName,
-    this.percentComplete,
-    this.hintsUsed,
-    this.currentPuzzle,
-  });
+  Teams(
+      {this.color,
+      this.teamSize,
+      this.teamName,
+      this.percentComplete,
+      this.hintsUsed,
+      this.currentPuzzle,
+      this.currentLocation});
   @override
   _TeamsState createState() => _TeamsState();
 }
@@ -55,9 +56,9 @@ class _TeamsState extends State<Teams> {
           print("onTap called.");
           pageCurrentPuzzle =
               widget.currentPuzzle != null ? widget.currentPuzzle : "";
-
           pageTeamName = widget.teamName;
           pageHintsUsed = widget.hintsUsed;
+          pageCurrentLocation = widget.currentLocation;
           navigateToSubPage(context);
         },
         child: AnimatedContainer(
