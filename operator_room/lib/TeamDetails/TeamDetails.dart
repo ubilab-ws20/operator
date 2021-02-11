@@ -18,7 +18,7 @@ class TeamDetails extends StatefulWidget {
 class _TeamDetailsState extends State<TeamDetails> {
   @override
   Widget build(BuildContext context) {
-    print("In TeamPage ${widget.teamNames}");
+    print("TeamDetails::In TeamPage ${widget.teamNames}");
     return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
@@ -26,7 +26,6 @@ class _TeamDetailsState extends State<TeamDetails> {
         alignment: Alignment.centerLeft,
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
-        //color: Colors.white,
         child: Column(
           children: [
             Container(
@@ -37,7 +36,6 @@ class _TeamDetailsState extends State<TeamDetails> {
                 style: GoogleFonts.roboto(
                   fontWeight: FontWeight.bold,
                   fontSize: 25.0,
-                  //fontStyle: FontStyle.italic,
                 ),
               ),
             ),

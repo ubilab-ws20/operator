@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:operator_room/Homepage/HomePage.dart';
 import 'package:operator_room/globals.dart';
 
 class LoginPage extends StatefulWidget {
   @override
   LoginPageState createState() {
-    print("IsLoggedInMain:$isLoggedIn");
+    print("LoginPage::IsLoggedInMain:$isLoggedIn");
     return LoginPageState();
   }
 }
 
 class LoginPageState extends State<LoginPage> {
-  bool isPassword = false;
-  bool isHidden = true;
+  bool _isPassword = false;
+  bool _isHidden = true;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -48,24 +49,42 @@ class LoginPageState extends State<LoginPage> {
               ),
               Container(
                   child: TextFormField(
-                    obscureText: isHidden,
+                    obscureText: _isHidden,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: 'Password',
                       suffix: InkWell(
                         onTap: _togglePasswordView,
                         child: Icon(
-                          isHidden ? Icons.visibility : Icons.visibility_off,
+                          _isHidden ? Icons.visibility : Icons.visibility_off,
                         ),
                       ),
                     ),
                     validator: (value) {
                       if (value == globalLoginPassword) {
-                        isPassword = true;
+                        _isPassword = true;
                         return null;
                       } else {
-                        isPassword = false;
+                        _isPassword = false;
                         return 'Wrong password';
+                      }
+                    },
+                    onFieldSubmitted: (value) {
+                      if (_formKey.currentState.validate()) {
+                        _formKey.currentState.save();
+                        if (_isPassword == true) {
+                          isLoggedIn = true;
+                          manager.initialiseMQTTClient();
+                          manager.connect();
+                          print("LoginPage::IsLoggedIn $isLoggedIn");
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (BuildContext context) => HomePage(),
+                            ),
+                            (route) => false,
+                          );
+                        }
                       }
                     },
                   ),
@@ -82,14 +101,16 @@ class LoginPageState extends State<LoginPage> {
                   ),
                   onPressed: () {
                     if (_formKey.currentState.validate()) {
-                      if (isPassword == true) {
+                      if (_isPassword == true) {
                         isLoggedIn = true;
                         manager.initialiseMQTTClient();
                         manager.connect();
-                        print("IsLoggedIn: $isLoggedIn");
-                        Navigator.pushNamedAndRemoveUntil(
+                        print("LoginPage::IsLoggedIn $isLoggedIn");
+                        Navigator.pushAndRemoveUntil(
                           context,
-                          "/homepage",
+                          MaterialPageRoute(
+                            builder: (BuildContext context) => HomePage(),
+                          ),
                           (route) => false,
                         );
                       }
@@ -107,7 +128,7 @@ class LoginPageState extends State<LoginPage> {
 
   void _togglePasswordView() {
     setState(() {
-      isHidden = !isHidden;
+      _isHidden = !_isHidden;
     });
   }
 }

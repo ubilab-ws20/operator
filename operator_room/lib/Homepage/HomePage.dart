@@ -1,10 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import 'package:flutter_map/flutter_map.dart';
+import 'package:operator_room/LoginPage/LoginPage.dart';
 import 'package:operator_room/globals.dart';
 import 'package:operator_room/TeamDetails/TeamDetails.dart';
 import 'package:latlong/latlong.dart';
@@ -15,50 +15,30 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  Map teamDetails = {};
-  Timer _everySecond;
-  double currentZoom = 18.0;
-  MapController mapController = MapController();
-  LatLng defaultLocation = LatLng(48.013217, 7.833264);
-
-  void _zoomOut() {
-    if (currentZoom > 0) {
-      currentZoom = currentZoom - 0.15;
-    } else {
-      currentZoom = 0;
-    }
-    mapController.move(defaultLocation, currentZoom);
-  }
-
-  void _zoomIn() {
-    //print(currentZoom);
-    if (currentZoom < 18.4) {
-      currentZoom = currentZoom + 0.15;
-    } else {
-      currentZoom = 18.4;
-    }
-    mapController.move(defaultLocation, currentZoom);
-  }
+  Map _teamDetails = {};
+  Timer _homePageTimer;
+  double _currentZoom = 18.0;
+  MapController _mapController = MapController();
+  LatLng _defaultLocation = LatLng(48.013217, 7.833264);
 
   @override
   void initState() {
     super.initState();
     // sets first value
-    teamDetails = {};
+    _teamDetails = {};
     // defines a timer
-    _everySecond = Timer.periodic(Duration(seconds: 2), (Timer t) {
+    _homePageTimer = Timer.periodic(Duration(seconds: 2), (Timer t) {
       setState(() {
-        print("Timer Called");
+        print("HomePage::Timer Called");
         if (mqttConnected == true) {
-          //print("Updating...");
-          teamDetails = manager.update();
-          print("HomePage $teamDetails");
-          if (teamDetails != null && teamDetails.length > 0) {
-            for (var v in teamDetails.keys) {
-              var team = teamDetails[v];
+          _teamDetails = manager.update();
+          print("HomePage:: TeamDetails $_teamDetails");
+          if (_teamDetails != null && _teamDetails.length > 0) {
+            for (var v in _teamDetails.keys) {
+              var team = _teamDetails[v];
               double latitude = team['latitude'];
               double longitude = team['longitude'];
-              print("TeamDetails is not Empty $team");
+              print("HomePage::TeamDetails is not Empty $team");
               if (globalTeamName.contains(team['teamName'])) {
                 int index = globalTeamName.indexOf(team['teamName']);
                 globalTeamSize[index] = team["teamSize"];
@@ -75,7 +55,7 @@ class _HomePageState extends State<HomePage> {
                 globalCurrentLocation.add(LatLng(latitude, longitude));
               }
             }
-            print("TeamNames:$globalTeamName");
+            print("HomePage::TeamNames:$globalTeamName");
           }
         } else {
           manager.initialiseMQTTClient();
@@ -105,9 +85,11 @@ class _HomePageState extends State<HomePage> {
               manager.disconnect();
               clearDetails();
               isLoggedIn = false;
-              Navigator.pushNamedAndRemoveUntil(
+              Navigator.pushAndRemoveUntil(
                 context,
-                "/login",
+                MaterialPageRoute(
+                  builder: (BuildContext context) => LoginPage(),
+                ),
                 (route) => false,
               );
             },
@@ -126,12 +108,12 @@ class _HomePageState extends State<HomePage> {
             //color: Colors.blue[50],
             child: Stack(
               children: [
-                TeamDetails(teamNames: teamDetails),
+                TeamDetails(teamNames: _teamDetails),
                 AnimatedContainer(
-                  margin: EdgeInsets.only(
-                      top: 275, bottom: 20, left: 20, right: 20),
+                  margin:
+                      EdgeInsets.only(top: 275, bottom: 2, left: 20, right: 20),
                   padding: EdgeInsets.all(5),
-                  height: 300,
+                  height: 500,
                   decoration: BoxDecoration(
                     border: Border.all(color: Colors.black),
                   ),
@@ -141,7 +123,7 @@ class _HomePageState extends State<HomePage> {
                       center: LatLng(48.012684, 7.835044),
                       zoom: 16.0,
                     ),
-                    mapController: mapController,
+                    mapController: _mapController,
                     layers: [
                       MarkerLayerOptions(markers: getMarkers()),
                     ],
@@ -184,7 +166,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void clearDetails() {
-    teamDetails.clear();
+    _teamDetails.clear();
     globalCurrentPuzzleInfo.clear();
     globalHintsUsed.clear();
     globalProgressPercentage.clear();
@@ -194,10 +176,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   List<Marker> getMarkers() {
-    //print("In getmarks");
     List<Marker> _markerList = [];
-    if (teamDetails.isNotEmpty) {
-      //print("In getmarks Non empty: $teamDetails");
+    if (_teamDetails.isNotEmpty) {
       for (var _users in globalCurrentLocation) {
         _markerList.add(
           Marker(
@@ -219,9 +199,27 @@ class _HomePageState extends State<HomePage> {
     return [];
   }
 
+  void _zoomOut() {
+    if (_currentZoom > 0) {
+      _currentZoom = _currentZoom - 0.15;
+    } else {
+      _currentZoom = 0;
+    }
+    _mapController.move(_defaultLocation, _currentZoom);
+  }
+
+  void _zoomIn() {
+    if (_currentZoom < 18.4) {
+      _currentZoom = _currentZoom + 0.15;
+    } else {
+      _currentZoom = 18.4;
+    }
+    _mapController.move(_defaultLocation, _currentZoom);
+  }
+
   @override
   void dispose() {
-    _everySecond.cancel();
+    _homePageTimer.cancel();
     super.dispose();
   }
 }

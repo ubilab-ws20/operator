@@ -39,7 +39,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
+  
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -52,13 +52,13 @@ flutter:
   fonts:
     - family: Texturina
       fonts:
-        - asset: fonts\Texturina-BoldItalic-opsz=72.ttf
+        - asset: fonts/Texturina-BoldItalic-opsz=72.ttf
           weight: 900
 
     - family: Piazzolla
       fonts:
-        - asset: fonts\Piazzolla-VariableFont_opsz,wght.ttf
-        - asset: fonts\Piazzolla-Italic-VariableFont_opsz,wght.ttf
+        - asset: fonts/Piazzolla-VariableFont_opsz,wght.ttf
+        - asset: fonts/Piazzolla-Italic-VariableFont_opsz,wght.ttf
 
   # To add assets to your application, add an assets section, like this:
   # assets:

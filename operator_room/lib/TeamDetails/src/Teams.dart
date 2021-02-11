@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_vector_icons/flutter_vector_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:latlong/latlong.dart';
+import 'package:operator_room/TeamDetails/src/TeamPage.dart';
 import 'package:operator_room/globals.dart';
 
 class Teams extends StatefulWidget {
@@ -30,16 +31,20 @@ class _TeamsState extends State<Teams> {
   bool touched = false;
 
   Future navigateToSubPage(context) async {
-    Navigator.pushNamed(
+    Navigator.pushAndRemoveUntil(
       context,
-      "/teampage",
+      MaterialPageRoute(
+        builder: (BuildContext context) => TeamPage(),
+      ),
+      (route) => true,
     );
   }
 
   @override
   Widget build(BuildContext context) {
     print(
-        "Team Details: ${widget.teamName}, ${widget.hintsUsed}, ${widget.percentComplete}");
+        "Teams::Team Details: ${widget.teamName}, ${widget.hintsUsed}, ${widget.percentComplete.substring(0, 1)}");
+    double progressValue = double.parse(widget.percentComplete);
     return MouseRegion(
       onEnter: (value) {
         setState(() {
@@ -53,7 +58,7 @@ class _TeamsState extends State<Teams> {
       },
       child: GestureDetector(
         onTap: () {
-          print("onTap called.");
+          print("Teams:: onTap called.");
           pageCurrentPuzzle =
               widget.currentPuzzle != null ? widget.currentPuzzle : "";
           pageTeamName = widget.teamName;
@@ -112,7 +117,7 @@ class _TeamsState extends State<Teams> {
                         style: GoogleFonts.quicksand(
                           fontWeight:
                               hovered ? FontWeight.bold : FontWeight.w500,
-                          fontSize: 15.0,
+                          fontSize: 13.0,
                           color: hovered ? Colors.black : Colors.black87,
                         ),
                       ),
@@ -233,10 +238,7 @@ class _TeamsState extends State<Teams> {
                     child: AnimatedContainer(
                       duration: Duration(milliseconds: 275),
                       height: 6.0,
-                      width: (double.parse(
-                                  widget.percentComplete.substring(0, 1)) /
-                              10) *
-                          160.0,
+                      width: (progressValue / 100) * 160.0,
                       decoration: BoxDecoration(
                         color: hovered ? Colors.white : widget.color,
                         borderRadius: BorderRadius.circular(20.0),
