@@ -27,35 +27,31 @@ class _HomePageState extends State<HomePage> {
     // sets first value
     _teamDetails = {};
     // defines a timer
-    _homePageTimer = Timer.periodic(Duration(seconds: 2), (Timer t) {
+    _homePageTimer = Timer.periodic(Duration(seconds: 5), (Timer t) {
       setState(() {
-        print("HomePage::Timer Called");
         if (mqttConnected == true) {
           _teamDetails = manager.update();
-          print("HomePage:: TeamDetails $_teamDetails");
-          if (_teamDetails != null && _teamDetails.length > 0) {
+          if (_teamDetails.isNotEmpty) {
             for (var v in _teamDetails.keys) {
               var team = _teamDetails[v];
-              double latitude = team['latitude'];
-              double longitude = team['longitude'];
-              print("HomePage::TeamDetails is not Empty $team");
-              if (globalTeamName.contains(team['teamName'])) {
-                int index = globalTeamName.indexOf(team['teamName']);
-                globalTeamSize[index] = team["teamSize"];
+              if (globalTeamID.contains(team["teamID"])) {
+                int index = globalTeamID.indexOf(team["teamID"]);
                 globalHintsUsed[index] = team["hintsUsed"];
                 globalProgressPercentage[index] = team["gameProgress"];
                 globalCurrentPuzzleInfo[index] = team["currentPuzzle"];
-                globalCurrentLocation[index] = LatLng(latitude, longitude);
+                globalCurrentLocation[index] =
+                    LatLng(team['latitude'], team['longitude']);
               } else {
+                globalTeamID.add(team["teamID"]);
                 globalTeamName.add(team['teamName']);
                 globalTeamSize.add(team["teamSize"]);
                 globalHintsUsed.add(team["hintsUsed"]);
                 globalProgressPercentage.add(team["gameProgress"]);
                 globalCurrentPuzzleInfo.add(team["currentPuzzle"]);
-                globalCurrentLocation.add(LatLng(latitude, longitude));
+                globalCurrentLocation
+                    .add(LatLng(team['latitude'], team['longitude']));
               }
             }
-            print("HomePage::TeamNames:$globalTeamName");
           }
         } else {
           manager.initialiseMQTTClient();
@@ -67,11 +63,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    if (mqttConnected == false || isLoggedIn == false) {
-      isLoggedIn = true;
-      manager.initialiseMQTTClient();
-      manager.connect();
-    }
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -85,6 +76,7 @@ class _HomePageState extends State<HomePage> {
               manager.disconnect();
               clearDetails();
               isLoggedIn = false;
+              _homePageTimer.cancel();
               Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(

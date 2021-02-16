@@ -15,7 +15,7 @@ String pageHintsUsed = "";
 LatLng pageCurrentLocation;
 
 List<String> globalTeamName = [];
-
+List<String> globalTeamID = [];
 List<String> globalHintsUsed = [];
 List<String> globalTeamSize = [];
 List<String> globalProgressPercentage = [];
