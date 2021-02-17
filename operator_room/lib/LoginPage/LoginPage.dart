@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:operator_room/Homepage/HomePage.dart';
 import 'package:operator_room/globals.dart';
 
+final String appNameString = "Scavenger Hunt";
+final String loginString = "Operator Login";
+final String submitString = "Submit";
+final String wrongPasswordString = "Wrong Password";
+String passwordString = "Password";
+
 class LoginPage extends StatefulWidget {
   @override
   LoginPageState createState() {
-    print("LoginPage::IsLoggedInMain:$isLoggedIn");
+    if (globalIsTesting) {
+      print("LoginPage::IsLoggedInMain:$isLoggedIn");
+    }
     return LoginPageState();
   }
 }
@@ -16,6 +24,17 @@ class LoginPageState extends State<LoginPage> {
 
   final _formKey = GlobalKey<FormState>();
 
+  /// Navigate to HomePage
+  Future navigateToSubPage(context) async {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => HomePage(),
+      ),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,7 +43,7 @@ class LoginPageState extends State<LoginPage> {
         child: AppBar(
           centerTitle: true,
           title: Text(
-            'Scavenger Hunt',
+            appNameString,
             style: TextStyle(fontSize: 40, fontFamily: 'Texturina'),
           ),
           backgroundColor: Colors.cyan[800],
@@ -40,7 +59,7 @@ class LoginPageState extends State<LoginPage> {
                 padding: EdgeInsets.fromLTRB(100, 90, 100, 0),
                 margin: EdgeInsets.all(40),
                 child: Text(
-                  'Operator Login',
+                  loginString,
                   style: TextStyle(
                       color: Colors.cyan[800],
                       fontSize: 40,
@@ -52,7 +71,7 @@ class LoginPageState extends State<LoginPage> {
                     obscureText: _isHidden,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(),
-                      labelText: 'Password',
+                      labelText: passwordString,
                       suffix: InkWell(
                         onTap: _togglePasswordView,
                         child: Icon(
@@ -66,26 +85,11 @@ class LoginPageState extends State<LoginPage> {
                         return null;
                       } else {
                         _isPassword = false;
-                        return 'Wrong password';
+                        return wrongPasswordString;
                       }
                     },
                     onFieldSubmitted: (value) {
-                      if (_formKey.currentState.validate()) {
-                        _formKey.currentState.save();
-                        if (_isPassword == true) {
-                          isLoggedIn = true;
-                          manager.initialiseMQTTClient();
-                          manager.connect();
-                          print("LoginPage::IsLoggedIn $isLoggedIn");
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (BuildContext context) => HomePage(),
-                            ),
-                            (route) => false,
-                          );
-                        }
-                      }
+                      onFormSubmitted();
                     },
                   ),
                   padding: EdgeInsets.fromLTRB(100, 0, 100, 10),
@@ -95,26 +99,12 @@ class LoginPageState extends State<LoginPage> {
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
                 child: RaisedButton(
                   child: Text(
-                    'Submit',
+                    submitString,
                     style:
                         TextStyle(color: Colors.white, fontFamily: 'Texturina'),
                   ),
                   onPressed: () {
-                    if (_formKey.currentState.validate()) {
-                      if (_isPassword == true) {
-                        isLoggedIn = true;
-                        manager.initialiseMQTTClient();
-                        manager.connect();
-                        print("LoginPage::IsLoggedIn $isLoggedIn");
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(
-                            builder: (BuildContext context) => HomePage(),
-                          ),
-                          (route) => false,
-                        );
-                      }
-                    }
+                    onFormSubmitted();
                   },
                   color: Colors.cyan[800],
                 ),
@@ -126,9 +116,25 @@ class LoginPageState extends State<LoginPage> {
     );
   }
 
+  /// Toggles view function for the eye icon in Password
   void _togglePasswordView() {
     setState(() {
       _isHidden = !_isHidden;
     });
+  }
+
+  /// Function called when the Login page is submitted
+  void onFormSubmitted() {
+    if (_formKey.currentState.validate()) {
+      if (_isPassword == true) {
+        isLoggedIn = true;
+        manager.initialiseMQTTClient();
+        manager.connect();
+        if (globalIsTesting) {
+          print("LoginPage::IsLoggedIn $isLoggedIn");
+        }
+        navigateToSubPage(context);
+      }
+    }
   }
 }

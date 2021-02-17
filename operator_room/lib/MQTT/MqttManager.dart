@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -8,7 +7,6 @@ import 'package:operator_room/globals.dart';
 
 class MQTTManager {
   MqttBrowserClient _client;
-  Timer _resetTimer;
   final String _host;
   bool _subscribed = false;
   Map _teamDetails = new Map();
@@ -17,6 +15,7 @@ class MQTTManager {
 
   MQTTManager({@required String host}) : _host = host;
 
+  /// Initialise the MQTT client
   void initialiseMQTTClient() {
     _client =
         MqttBrowserClient(_host, "${DateTime.now()}", maxConnectionAttempts: 1);
@@ -29,13 +28,18 @@ class MQTTManager {
     _client.resubscribeOnAutoReconnect = true;
   }
 
+  /// Connects to MQTT Browser client
   void connect() async {
     assert(_client != null);
     try {
-      //print('MQTTManager::connect()');
+      if (globalIsTesting) {
+        print('MQTTManager::connect()');
+      }
       await _client.connect('ubilab', 'ubilab');
     } on Exception catch (e) {
-      //print('MQTTManager::client exception - $e');
+      if (globalIsTesting) {
+        print('MQTTManager::client exception - $e');
+      }
       disconnect();
     }
 
@@ -46,20 +50,28 @@ class MQTTManager {
       var jsonObj = jsonDecode(payload);
       String teamID = jsonObj["teamID"];
       if (jsonObj["connected"]) {
-        // if (_teamDetails[teamID] != null) {
-        //   print("MQTTManager::TimeStamp:TeamDetails: ${_teamDetails[teamID]}");
-        //   _prevTime[teamID] = _teamDetails[teamID]["timeStamp"];
-        // }
+        if (_teamDetails[teamID] != null) {
+          if (globalIsTesting) {
+            print(
+                "MQTTManager::TimeStamp:TeamDetails: ${_teamDetails[teamID]}");
+          }
+          _prevTime[teamID] = _teamDetails[teamID]["timeStamp"];
+        }
         _teamDetails[teamID] = jsonObj;
-        //print("MQTTManager::TimeStamp: $_prevTime");
+        if (globalIsTesting) {
+          print("MQTTManager::TimeStamp: $_prevTime");
+        }
       } else {
         clearTeamDetails(teamID);
       }
     });
   }
 
+  /// Disconnects from MQTT Browser client
   void disconnect() {
-    //print("MQTTManager::disconnect()");
+    if (globalIsTesting) {
+      print("MQTTManager::disconnect()");
+    }
     if (isSubscribed()) {
       _unsubscribeToTopic(_topicName);
     }
@@ -69,68 +81,101 @@ class MQTTManager {
     return;
   }
 
+  /// Function called when connected to MQTT Browser Client succeeded
   void onConnected() {
-    //print("MQTTManager::onConnected()");
+    if (globalIsTesting) {
+      print("MQTTManager::onConnected()");
+    }
     mqttConnected = true;
     _subscribeToTopic(_topicName);
-    // _resetTimer = Timer.periodic(Duration(seconds: 30), (Timer t) {
-    //   //print("MQTTManager::Clearing details");
-    //   clearAllDetails();
-    // });
   }
 
+  /// Function Subscribes to TopicName
   void _subscribeToTopic(String topicName) {
-    //print('MQTTManager::Subscribing to the $topicName topic');
+    if (globalIsTesting) {
+      print('MQTTManager::Subscribing to the $topicName topic');
+    }
     _client.subscribe(topicName, MqttQos.exactlyOnce);
   }
 
+  /// Unsubscribes from the TopicName
   void _unsubscribeToTopic(String topicName) {
-    //print('MQTTManager::Unsubscribing to the $topicName topic');
+    if (globalIsTesting) {
+      print('MQTTManager::Unsubscribing to the $topicName topic');
+    }
     _client.unsubscribe(topicName);
     _subscribed = false;
   }
 
-// subscribe to topic succeeded
+// Function called when Subscribe to topic succeeded
   void onSubscribed(String topic) {
-    //print('MQTTManager::Subscribed topic: $topic');
+    if (globalIsTesting) {
+      print('MQTTManager::Subscribed topic: $topic');
+    }
     _subscribed = true;
   }
 
-// subscribe to topic failed
+// Subscribe to topic failed
   void onSubscribeFail(String topic) {
-    //print('MQTTManager::onSubscribeFail() Failed to subscribe $topic');
+    if (globalIsTesting) {
+      print('MQTTManager::onSubscribeFail() Failed to subscribe $topic');
+    }
   }
 
-// unsubscribe succeeded
+// Function called when Unsubscribe succeeded
   void onUnsubscribed(String topic) {
-    //print('MQTTManager::onUnsubscribed() Unsubscribed topic: $topic');
+    if (globalIsTesting) {
+      print('MQTTManager::onUnsubscribed() Unsubscribed topic: $topic');
+    }
     _subscribed = false;
   }
 
+  /// Check if the client is still subscribed to the TopicName
   bool isSubscribed() {
-    //print('MQTTManager::isSubscribed()');
+    if (globalIsTesting) {
+      print('MQTTManager::isSubscribed()');
+    }
     return _subscribed;
   }
 
+  /// Returns the updated Team details
   Map update() {
-    //print('MQTTManager::Mapupdate()');
+    List removeKeys = [];
     if (_teamDetails.isEmpty) {
       return {};
+    } else if (_prevTime.isNotEmpty) {
+      for (var key in _prevTime.keys) {
+        if (_prevTime[key] == _teamDetails[key]["timeStamp"]) {
+          if (globalIsTesting) {
+            print(
+                "Mqtt Update function $_prevTime and ${_teamDetails[key]["timeStamp"]}");
+          }
+          removeKeys.add(key);
+        } else {
+          _prevTime[key] = _teamDetails[key]["timeStamp"];
+        }
+      }
     }
+    for (var teamKey in removeKeys) {
+      clearTeamDetails(teamKey);
+    }
+
     return _teamDetails;
   }
 
+  /// Function called when disconnect is succeeded
   void onDisconnected() {
-    //print('MQTTManager::onDisconnected()');
+    if (globalIsTesting) {
+      print('MQTTManager::onDisconnected()');
+    }
     mqttConnected = false;
-    // if (_resetTimer.isActive) {
-    //   _resetTimer.cancel();
-    // }
     clearAllDetails();
   }
 
+  /// Clears the individual team details
   void clearTeamDetails(String teamID) {
     _teamDetails.remove(teamID);
+    _prevTime.remove(teamID);
     if (globalTeamID.contains(teamID)) {
       int index = globalTeamID.indexOf(teamID);
       globalTeamName.remove(globalTeamName[index]);
@@ -138,11 +183,16 @@ class MQTTManager {
       globalHintsUsed.remove(globalHintsUsed[index]);
       globalProgressPercentage.remove(globalProgressPercentage[index]);
     }
+    globalTeamID.remove(teamID);
   }
 
+  /// Clears all global variables
   void clearAllDetails() {
-    //print('MQTTManager::clearDetails()');
+    if (globalIsTesting) {
+      print('MQTTManager::clearDetails()');
+    }
     _teamDetails.clear();
+    _prevTime.clear();
     globalTeamID.clear();
     globalCurrentPuzzleInfo.clear();
     globalHintsUsed.clear();

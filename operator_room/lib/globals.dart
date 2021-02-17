@@ -21,3 +21,6 @@ List<String> globalTeamSize = [];
 List<String> globalProgressPercentage = [];
 List<String> globalCurrentPuzzleInfo = [];
 List<LatLng> globalCurrentLocation = [];
+
+/// Debugging & Testing
+final bool globalIsTesting = true;

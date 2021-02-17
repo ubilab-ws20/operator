@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:operator_room/TeamDetails/src/Teams.dart';
 import 'package:operator_room/globals.dart';
 
+final String pageTitleString = "Operator Room";
+
 class TeamDetails extends StatefulWidget {
   final Map teamNames;
 
@@ -18,7 +20,9 @@ class TeamDetails extends StatefulWidget {
 class _TeamDetailsState extends State<TeamDetails> {
   @override
   Widget build(BuildContext context) {
-    print("TeamDetails::In TeamPage ${widget.teamNames}");
+    if (globalIsTesting) {
+      print("TeamDetails::In TeamPage ${widget.teamNames}");
+    }
     return Container(
       height: MediaQuery.of(context).size.height,
       width: MediaQuery.of(context).size.width,
@@ -32,10 +36,11 @@ class _TeamDetailsState extends State<TeamDetails> {
               alignment: Alignment.centerLeft,
               margin: EdgeInsets.only(left: 30.0, top: 25.0, bottom: 10.0),
               child: Text(
-                "Operator Room",
-                style: GoogleFonts.roboto(
+                pageTitleString,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontFamily: 'Piazzolla',
                   fontWeight: FontWeight.bold,
-                  fontSize: 25.0,
                 ),
               ),
             ),
@@ -51,8 +56,10 @@ class _TeamDetailsState extends State<TeamDetails> {
                 scrollDirection: Axis.horizontal,
                 itemCount: (widget.teamNames.length).ceil(),
                 itemBuilder: (BuildContext context, int index) {
-                  print(
-                      "Builder:$index- ${globalTeamName[index]},${globalProgressPercentage[index]}, ${globalTeamSize[index]}");
+                  if (globalIsTesting) {
+                    print(
+                        "Builder:$index- ${globalTeamName[index]},${globalProgressPercentage[index]}, ${globalTeamSize[index]}");
+                  }
                   return Teams(
                     color: Color(0xff914BA9),
                     teamName: globalTeamName[index],

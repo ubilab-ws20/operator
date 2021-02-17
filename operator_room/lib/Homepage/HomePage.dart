@@ -9,6 +9,9 @@ import 'package:operator_room/globals.dart';
 import 'package:operator_room/TeamDetails/TeamDetails.dart';
 import 'package:latlong/latlong.dart';
 
+final String appNameString = "Scavenger Hunt";
+final String logOutString = "Log Out";
+
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -21,44 +24,34 @@ class _HomePageState extends State<HomePage> {
   MapController _mapController = MapController();
   LatLng _defaultLocation = LatLng(48.013217, 7.833264);
 
+  /// Initialises the HomePage class
   @override
   void initState() {
     super.initState();
     // sets first value
     _teamDetails = {};
+    if (globalIsTesting) {
+      print("HomePage:: init()");
+    }
     // defines a timer
-    _homePageTimer = Timer.periodic(Duration(seconds: 5), (Timer t) {
+    _homePageTimer = Timer.periodic(Duration(seconds: 4), (Timer t) {
       setState(() {
         if (mqttConnected == true) {
-          _teamDetails = manager.update();
-          if (_teamDetails.isNotEmpty) {
-            for (var v in _teamDetails.keys) {
-              var team = _teamDetails[v];
-              if (globalTeamID.contains(team["teamID"])) {
-                int index = globalTeamID.indexOf(team["teamID"]);
-                globalHintsUsed[index] = team["hintsUsed"];
-                globalProgressPercentage[index] = team["gameProgress"];
-                globalCurrentPuzzleInfo[index] = team["currentPuzzle"];
-                globalCurrentLocation[index] =
-                    LatLng(team['latitude'], team['longitude']);
-              } else {
-                globalTeamID.add(team["teamID"]);
-                globalTeamName.add(team['teamName']);
-                globalTeamSize.add(team["teamSize"]);
-                globalHintsUsed.add(team["hintsUsed"]);
-                globalProgressPercentage.add(team["gameProgress"]);
-                globalCurrentPuzzleInfo.add(team["currentPuzzle"]);
-                globalCurrentLocation
-                    .add(LatLng(team['latitude'], team['longitude']));
-              }
-            }
-          }
-        } else {
-          manager.initialiseMQTTClient();
-          manager.connect();
+          callMqttUpdate();
         }
       });
     });
+  }
+
+  /// Navigate to LoginPage
+  Future navigateToSubPage(context) async {
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => LoginPage(),
+      ),
+      (route) => false,
+    );
   }
 
   @override
@@ -66,26 +59,19 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Scavenger_Hunt',
+          appNameString,
           style: TextStyle(fontSize: 40, fontFamily: 'Piazzolla'),
         ),
         actions: <Widget>[
           FlatButton(
             textColor: Colors.white,
             onPressed: () {
-              manager.disconnect();
-              clearDetails();
-              isLoggedIn = false;
-              _homePageTimer.cancel();
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (BuildContext context) => LoginPage(),
-                ),
-                (route) => false,
-              );
+              onLogoutPressed();
             },
-            child: Text("LOG OUT"),
+            child: Text(
+              logOutString,
+              style: TextStyle(fontSize: 17, fontFamily: 'Piazzolla'),
+            ),
             shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
           ),
         ],
@@ -157,16 +143,43 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void clearDetails() {
-    _teamDetails.clear();
-    globalCurrentPuzzleInfo.clear();
-    globalHintsUsed.clear();
-    globalProgressPercentage.clear();
-    globalTeamName.clear();
-    globalTeamSize.clear();
-    globalCurrentLocation.clear();
+  /// Updates the team details received by the MQTT client
+  void callMqttUpdate() {
+    _teamDetails = manager.update();
+    if (_teamDetails != null && _teamDetails.isNotEmpty) {
+      for (var v in _teamDetails.keys) {
+        var team = _teamDetails[v];
+        if (globalTeamID.contains(team["teamID"])) {
+          int index = globalTeamID.indexOf(team["teamID"]);
+          globalHintsUsed[index] = team["hintsUsed"];
+          globalProgressPercentage[index] = team["gameProgress"];
+          globalCurrentPuzzleInfo[index] = team["currentPuzzle"];
+          globalCurrentLocation[index] =
+              LatLng(team['latitude'], team['longitude']);
+        } else {
+          globalTeamID.add(team["teamID"]);
+          globalTeamName.add(team['teamName']);
+          globalTeamSize.add(team["teamSize"]);
+          globalHintsUsed.add(team["hintsUsed"]);
+          globalProgressPercentage.add(team["gameProgress"]);
+          globalCurrentPuzzleInfo.add(team["currentPuzzle"]);
+          globalCurrentLocation
+              .add(LatLng(team['latitude'], team['longitude']));
+        }
+      }
+    }
   }
 
+  /// Function executed when logout pressed
+  void onLogoutPressed() {
+    manager.disconnect();
+    clearDetails();
+    isLoggedIn = false;
+    _homePageTimer.cancel();
+    navigateToSubPage(context);
+  }
+
+  /// Get individual team Marker on Map
   List<Marker> getMarkers() {
     List<Marker> _markerList = [];
     if (_teamDetails.isNotEmpty) {
@@ -191,6 +204,7 @@ class _HomePageState extends State<HomePage> {
     return [];
   }
 
+  /// Zoom Out from current location on Map
   void _zoomOut() {
     if (_currentZoom > 0) {
       _currentZoom = _currentZoom - 0.15;
@@ -200,6 +214,7 @@ class _HomePageState extends State<HomePage> {
     _mapController.move(_defaultLocation, _currentZoom);
   }
 
+  /// Zoom In from current location on Map
   void _zoomIn() {
     if (_currentZoom < 18.4) {
       _currentZoom = _currentZoom + 0.15;
@@ -209,9 +224,21 @@ class _HomePageState extends State<HomePage> {
     _mapController.move(_defaultLocation, _currentZoom);
   }
 
+  /// Cancel the timer
   @override
   void dispose() {
     _homePageTimer.cancel();
     super.dispose();
+  }
+
+  /// Clears the global variables
+  void clearDetails() {
+    _teamDetails.clear();
+    globalCurrentPuzzleInfo.clear();
+    globalHintsUsed.clear();
+    globalProgressPercentage.clear();
+    globalTeamName.clear();
+    globalTeamSize.clear();
+    globalCurrentLocation.clear();
   }
 }

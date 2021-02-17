@@ -4,6 +4,11 @@ import 'package:latlong/latlong.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:operator_room/globals.dart';
 
+final String currentPuzzleString = "Currently in: ";
+final String puzzleString = "Puzzle ";
+final String hintsUsedString = "Number of hints used";
+final String detailsString = " Details";
+
 class TeamPage extends StatelessWidget {
   final String _teamName = pageTeamName;
   final String _hintsUsed = pageHintsUsed;
@@ -16,7 +21,7 @@ class TeamPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_teamName + " Details"),
+        title: Text(_teamName + detailsString),
         backgroundColor: Color(0xff333951),
       ),
       body: ListView(
@@ -36,7 +41,7 @@ class TeamPage extends StatelessWidget {
                         child: Column(
                           children: [
                             Text(
-                              'Currently in:',
+                              currentPuzzleString,
                               textAlign: TextAlign.left,
                               textScaleFactor: 1.5,
                               style: GoogleFonts.paprika(
@@ -45,7 +50,7 @@ class TeamPage extends StatelessWidget {
                               ),
                             ),
                             Text(
-                              "Puzzle " + _currentPuzzle,
+                              puzzleString + _currentPuzzle,
                               textAlign: TextAlign.left,
                               textScaleFactor: 1.5,
                               style: GoogleFonts.paprika(
@@ -71,7 +76,7 @@ class TeamPage extends StatelessWidget {
                         child: Column(
                           children: [
                             Text(
-                              'Number of hints used',
+                              hintsUsedString,
                               textAlign: TextAlign.left,
                               textScaleFactor: 1.5,
                               style: GoogleFonts.paprika(
@@ -120,7 +125,9 @@ class TeamPage extends StatelessWidget {
                               icon: Icon(Icons.location_on),
                               iconSize: 45.0,
                               onPressed: () {
-                                print(_teamName);
+                                if (globalIsTesting) {
+                                  print(_teamName);
+                                }
                               },
                             ),
                           ),
@@ -165,6 +172,7 @@ class TeamPage extends StatelessWidget {
     );
   }
 
+  /// Zoom Out from current location on Map
   void _zoomOut() {
     if (_currentZoom > 0) {
       _currentZoom = _currentZoom - 0.15;
@@ -174,6 +182,7 @@ class TeamPage extends StatelessWidget {
     _mapController.move(_currentLocation, _currentZoom);
   }
 
+  /// Zoom In from current location on Map
   void _zoomIn() {
     if (_currentZoom < 18.4) {
       _currentZoom = _currentZoom + 0.15;

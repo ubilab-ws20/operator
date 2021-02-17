@@ -5,6 +5,9 @@ import 'package:latlong/latlong.dart';
 import 'package:operator_room/TeamDetails/src/TeamPage.dart';
 import 'package:operator_room/globals.dart';
 
+final String hintsUsedString = "Hints Used:";
+final String percentageSymbolString = "%";
+
 class Teams extends StatefulWidget {
   final Color color;
   final String teamSize;
@@ -30,6 +33,7 @@ class _TeamsState extends State<Teams> {
   bool hovered = false;
   bool touched = false;
 
+  /// Navigates to TeamPage
   Future navigateToSubPage(context) async {
     Navigator.pushAndRemoveUntil(
       context,
@@ -42,8 +46,10 @@ class _TeamsState extends State<Teams> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        "Teams::Team Details: ${widget.teamName}, ${widget.hintsUsed}, ${widget.percentComplete.substring(0, 1)}");
+    if (globalIsTesting) {
+      print(
+          "Teams::Team Details: ${widget.teamName}, ${widget.hintsUsed}, ${widget.percentComplete.substring(0, 1)}");
+    }
     double progressValue = double.parse(widget.percentComplete);
     return MouseRegion(
       onEnter: (value) {
@@ -58,7 +64,6 @@ class _TeamsState extends State<Teams> {
       },
       child: GestureDetector(
         onTap: () {
-          print("Teams:: onTap called.");
           pageCurrentPuzzle =
               widget.currentPuzzle != null ? widget.currentPuzzle : "";
           pageTeamName = widget.teamName;
@@ -106,12 +111,10 @@ class _TeamsState extends State<Teams> {
                       ),
                     ),
                     SizedBox(
-                      //height: 10.0,
                       width: 10.0,
                     ),
                     Container(
                       height: 20.0,
-                      //width: 20.0,
                       child: Text(
                         widget.teamName,
                         style: GoogleFonts.quicksand(
@@ -126,12 +129,10 @@ class _TeamsState extends State<Teams> {
                 ),
                 SizedBox(
                   height: 20.0,
-                  //width: 50.0,
                 ),
                 Row(
                   children: [
                     SizedBox(
-                      // height: 50.0,
                       width: 15.0,
                     ),
                     Container(
@@ -148,7 +149,6 @@ class _TeamsState extends State<Teams> {
                       ),
                     ),
                     SizedBox(
-                      // height: 50.0,
                       width: 10.0,
                     ),
                     Container(
@@ -168,12 +168,10 @@ class _TeamsState extends State<Teams> {
                 ),
                 SizedBox(
                   height: 7.0,
-                  //width: 50.0,
                 ),
                 Row(
                   children: [
                     SizedBox(
-                      // height: 50.0,
                       width: 15.0,
                     ),
                     Container(
@@ -192,14 +190,13 @@ class _TeamsState extends State<Teams> {
                       ),
                     ),
                     SizedBox(
-                      // height: 50.0,
                       width: 10.0,
                     ),
                     Container(
                       height: 15.0,
                       width: 100.0,
                       child: Text(
-                        "Hints Used:" + widget.hintsUsed,
+                        hintsUsedString + widget.hintsUsed,
                         style: GoogleFonts.quicksand(
                           fontWeight:
                               hovered ? FontWeight.bold : FontWeight.w500,
@@ -216,7 +213,7 @@ class _TeamsState extends State<Teams> {
                     left: 135.0,
                   ),
                   child: Text(
-                    widget.percentComplete + "%",
+                    widget.percentComplete + percentageSymbolString,
                     style: GoogleFonts.quicksand(
                       fontWeight: hovered ? FontWeight.bold : FontWeight.w500,
                       fontSize: 12.0,
