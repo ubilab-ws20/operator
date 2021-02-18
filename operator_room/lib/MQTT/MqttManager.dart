@@ -184,6 +184,7 @@ class MQTTManager {
       globalTeamSize.remove(globalTeamSize[index]);
       globalHintsUsed.remove(globalHintsUsed[index]);
       globalProgressPercentage.remove(globalProgressPercentage[index]);
+      globalCurrentLocation.remove(globalCurrentLocation[index]);
     }
     globalTeamID.remove(teamID);
   }
