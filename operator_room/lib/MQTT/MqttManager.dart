@@ -145,7 +145,8 @@ class MQTTManager {
       return {};
     } else if (_prevTime.isNotEmpty) {
       for (var key in _prevTime.keys) {
-        if (_prevTime[key] == _teamDetails[key]["timeStamp"]) {
+        var hours = double.parse(_prevTime[key].split(":")[0]);
+        if (_prevTime[key] == _teamDetails[key]["timeStamp"] || hours >= 1) {
           if (globalIsTesting) {
             print(
                 "Mqtt Update function $_prevTime and ${_teamDetails[key]["timeStamp"]}");

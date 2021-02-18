@@ -173,7 +173,7 @@ class _HomePageState extends State<HomePage> {
   /// Function executed when logout pressed
   void onLogoutPressed() {
     manager.disconnect();
-    clearDetails();
+    _teamDetails.clear();
     isLoggedIn = false;
     _homePageTimer.cancel();
     navigateToSubPage(context);
@@ -229,16 +229,5 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     _homePageTimer.cancel();
     super.dispose();
-  }
-
-  /// Clears the global variables
-  void clearDetails() {
-    _teamDetails.clear();
-    globalCurrentPuzzleInfo.clear();
-    globalHintsUsed.clear();
-    globalProgressPercentage.clear();
-    globalTeamName.clear();
-    globalTeamSize.clear();
-    globalCurrentLocation.clear();
   }
 }

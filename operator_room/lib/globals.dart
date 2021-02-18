@@ -9,6 +9,8 @@ MQTTManager manager = MQTTManager(host: stringHostName);
 bool isLoggedIn = false;
 bool mqttConnected = true;
 
+double globalMaxTime = 2;
+
 String pageTeamName = "";
 String pageCurrentPuzzle = "";
 String pageHintsUsed = "";
