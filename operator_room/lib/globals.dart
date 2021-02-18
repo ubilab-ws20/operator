@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:latlong/latlong.dart';
 import 'package:operator_room/MQTT/MqttManager.dart';
 
@@ -23,6 +25,7 @@ List<String> globalTeamSize = [];
 List<String> globalProgressPercentage = [];
 List<String> globalCurrentPuzzleInfo = [];
 List<LatLng> globalCurrentLocation = [];
+List<Color> globalTeamColor = [];
 
 /// Debugging & Testing
 final bool globalIsTesting = true;

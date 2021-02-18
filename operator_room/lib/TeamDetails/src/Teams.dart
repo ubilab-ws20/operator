@@ -102,12 +102,12 @@ class _TeamsState extends State<Teams> {
                       width: 30.0,
                       child: Icon(
                         MaterialCommunityIcons.account_group,
-                        color: hovered ? Colors.black : Colors.white,
+                        color: hovered ? widget.color : Colors.black,
                         size: 25.0,
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(30.0),
-                        color: hovered ? Colors.white : Colors.black,
+                        color: hovered ? Colors.black : widget.color,
                       ),
                     ),
                     SizedBox(
@@ -237,7 +237,7 @@ class _TeamsState extends State<Teams> {
                       height: 6.0,
                       width: (progressValue / 100) * 160.0,
                       decoration: BoxDecoration(
-                        color: hovered ? Colors.white : widget.color,
+                        color: hovered ? Colors.white : Color(0xff914BA9),
                         borderRadius: BorderRadius.circular(20.0),
                       ),
                     ),

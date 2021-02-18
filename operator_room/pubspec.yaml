@@ -32,6 +32,7 @@ dependencies:
   flutter_vector_icons: ^0.2.1
   validators: ^2.0.0
   flutter_map: any
+  random_color: ^1.0.5
   user_location:
     git:
       url: https://github.com/igaurab/user_location_plugin.git
@@ -39,7 +40,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

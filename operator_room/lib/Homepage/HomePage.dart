@@ -165,6 +165,7 @@ class _HomePageState extends State<HomePage> {
           globalCurrentPuzzleInfo.add(team["currentPuzzle"]);
           globalCurrentLocation
               .add(LatLng(team['latitude'], team['longitude']));
+          globalTeamColor.add(team["teamColor"]);
         }
       }
     }
@@ -183,7 +184,8 @@ class _HomePageState extends State<HomePage> {
   List<Marker> getMarkers() {
     List<Marker> _markerList = [];
     if (_teamDetails.isNotEmpty) {
-      for (var _users in globalCurrentLocation) {
+      for (int i = 0; i < globalCurrentLocation.length; i++) {
+        var _users = globalCurrentLocation[i];
         _markerList.add(
           Marker(
             width: 40.0,
@@ -191,7 +193,7 @@ class _HomePageState extends State<HomePage> {
             builder: (context) => Container(
               child: IconButton(
                 icon: Icon(Icons.location_on_sharp),
-                color: Colors.teal[900],
+                color: globalTeamColor[i],
                 iconSize: 25.0,
                 onPressed: () {},
               ),

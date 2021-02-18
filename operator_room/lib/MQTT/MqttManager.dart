@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:mqtt_client/mqtt_client.dart';
 import 'package:mqtt_client/mqtt_browser_client.dart';
 import 'package:operator_room/globals.dart';
+import 'package:random_color/random_color.dart';
 
 class MQTTManager {
   MqttBrowserClient _client;
@@ -11,7 +12,9 @@ class MQTTManager {
   bool _subscribed = false;
   Map _teamDetails = new Map();
   Map _prevTime = new Map();
+  Map _countFlag = new Map();
   final String _topicName = "testID/scavenger_hunt";
+  RandomColor _randomColor = RandomColor();
 
   MQTTManager({@required String host}) : _host = host;
 
@@ -50,14 +53,21 @@ class MQTTManager {
       var jsonObj = jsonDecode(payload);
       String teamID = jsonObj["teamID"];
       if (jsonObj["connected"]) {
-        if (_teamDetails[teamID] != null) {
+        if (_teamDetails.containsKey(teamID)) {
           if (globalIsTesting) {
             print(
                 "MQTTManager::TimeStamp:TeamDetails: ${_teamDetails[teamID]}");
           }
           _prevTime[teamID] = _teamDetails[teamID]["timeStamp"];
+          var _color = _teamDetails[teamID]["teamColor"];
+          _teamDetails[teamID] = jsonObj;
+          _teamDetails[teamID]["teamColor"] = _color;
+        } else {
+          _teamDetails[teamID] = jsonObj;
+          Color _color = _randomColor.randomColor(
+              colorSaturation: ColorSaturation.highSaturation);
+          _teamDetails[teamID]["teamColor"] = _color;
         }
-        _teamDetails[teamID] = jsonObj;
         if (globalIsTesting) {
           print("MQTTManager::TimeStamp: $_prevTime");
         }
@@ -146,22 +156,31 @@ class MQTTManager {
     } else if (_prevTime.isNotEmpty) {
       for (var key in _prevTime.keys) {
         var hours = double.parse(_prevTime[key].split(":")[0]);
+        double progress = double.parse(_teamDetails[key]["gameProgress"]);
         if (_prevTime[key] == _teamDetails[key]["timeStamp"] ||
             hours >= globalMaxTime) {
           if (globalIsTesting) {
             print(
-                "Mqtt Update function $_prevTime and ${_teamDetails[key]["timeStamp"]}");
+                "Mqtt Update function ${_prevTime[key]} and ${_teamDetails[key]["timeStamp"]} \n $progress");
           }
-          removeKeys.add(key);
+          if (_countFlag[key] == null) {
+            _countFlag[key] = 1;
+          } else if ((_countFlag[key] >= 5 && progress < 1) ||
+              (_countFlag[key] >= 25 && progress == 1)) {
+            removeKeys.add(key);
+          } else {
+            _countFlag[key]++;
+          }
         } else {
           _prevTime[key] = _teamDetails[key]["timeStamp"];
+          _countFlag[key] = 0;
         }
       }
     }
     for (var teamKey in removeKeys) {
       clearTeamDetails(teamKey);
     }
-
+    removeKeys.clear();
     return _teamDetails;
   }
 
@@ -178,6 +197,7 @@ class MQTTManager {
   void clearTeamDetails(String teamID) {
     _teamDetails.remove(teamID);
     _prevTime.remove(teamID);
+    _countFlag.remove(teamID);
     if (globalTeamID.contains(teamID)) {
       int index = globalTeamID.indexOf(teamID);
       globalTeamName.remove(globalTeamName[index]);
@@ -185,6 +205,7 @@ class MQTTManager {
       globalHintsUsed.remove(globalHintsUsed[index]);
       globalProgressPercentage.remove(globalProgressPercentage[index]);
       globalCurrentLocation.remove(globalCurrentLocation[index]);
+      globalTeamColor.remove(globalTeamColor[index]);
     }
     globalTeamID.remove(teamID);
   }
@@ -196,6 +217,7 @@ class MQTTManager {
     }
     _teamDetails.clear();
     _prevTime.clear();
+    _countFlag.clear();
     globalTeamID.clear();
     globalCurrentPuzzleInfo.clear();
     globalHintsUsed.clear();
@@ -203,5 +225,6 @@ class MQTTManager {
     globalTeamName.clear();
     globalTeamSize.clear();
     globalCurrentLocation.clear();
+    globalTeamColor.clear();
   }
 }

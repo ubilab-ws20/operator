@@ -34,7 +34,7 @@ class _TeamDetailsState extends State<TeamDetails> {
           children: [
             Container(
               alignment: Alignment.centerLeft,
-              margin: EdgeInsets.only(left: 30.0, top: 25.0, bottom: 10.0),
+              margin: EdgeInsets.only(left: 30.0, top: 10.0, bottom: 10.0),
               child: Text(
                 pageTitleString,
                 style: TextStyle(
@@ -61,7 +61,7 @@ class _TeamDetailsState extends State<TeamDetails> {
                         "Builder:$index- ${globalTeamName[index]},${globalProgressPercentage[index]}, ${globalTeamSize[index]}");
                   }
                   return Teams(
-                    color: Color(0xff914BA9),
+                    color: globalTeamColor[index],
                     teamName: globalTeamName[index],
                     percentComplete:
                         (double.parse(globalProgressPercentage[index]) * 100)
