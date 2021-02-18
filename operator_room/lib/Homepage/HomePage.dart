@@ -34,7 +34,7 @@ class _HomePageState extends State<HomePage> {
       print("HomePage:: init()");
     }
     // defines a timer
-    _homePageTimer = Timer.periodic(Duration(seconds: 4), (Timer t) {
+    _homePageTimer = Timer.periodic(Duration(seconds: 6), (Timer t) {
       setState(() {
         if (mqttConnected == true) {
           callMqttUpdate();
